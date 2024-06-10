@@ -1,0 +1,10 @@
+apiVersion: v2
+name: slinkee
+version: 0.0.1
+description: A Helm chart for slinkee
+type: application
+home: https://github.com/vultr/slinkee
+sources:
+  - https://github.com/vultr/slinkee
+maintainers:
+  - name: Josten Landtroop

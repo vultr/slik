@@ -1,0 +1,9 @@
+---
+apiVersion: "hpc.vultr.com/v1"
+kind: Slinkee
+metadata:
+  name: test
+spec:
+  namespace: default
+  slurmdbd: false
+  slurmrestd: false

@@ -1,0 +1,34 @@
+slinkee:
+  repository: ewr.vultrcr.com/slurm/slinkee
+  tag: v0.0.93
+  resources:
+    requests:
+      memory: "1Gi"
+    limits:
+      memory: "2Gi"
+  logging:
+    debug: true
+    path: ./
+    encoding: console
+  probes_api:
+    listen: 0.0.0.0
+    port: 9093
+
+slurm:
+  slurmabler:
+    image: "ewr.vultrcr.com/slurm/slurmabler:v0.0.63"
+    service_account: "slinkee"
+  munged:
+    image: "ewr.vultrcr.com/slurm/munged:v0.0.63"
+  slurmctld:
+    image: "ewr.vultrcr.com/slurm/slurmctld:v0.0.63"
+  slurmd:
+    image: "ewr.vultrcr.com/slurm/slurmd:v0.0.63"
+  slurm_toolbox:
+    image: "ewr.vultrcr.com/slurm/toolbox:v0.0.63"
+  mariadb:
+    image: "mariadb:11.4.2-noble"
+  slurmdbd:
+    image: "ewr.vultrcr.com/slurm/slurmdbd:v0.0.63"
+  slurmrestd:
+    image: "ewr.vultrcr.com/slurm/slurmrestd:v0.0.63"
