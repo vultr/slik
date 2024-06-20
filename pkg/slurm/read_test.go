@@ -105,7 +105,7 @@ type Fixture1 struct {
 	description string
 }
 
-func TestWorkloadExists(t *testing.T) {
+func TestSlurmExists(t *testing.T) {
 	client := fake.NewSimpleClientset(
 		&batchv1.JobList{
 			Items: jobsFixture,

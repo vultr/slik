@@ -4,8 +4,9 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 
-	api "github.com/vultr/slinkee/spec/api/types/v1"
-	client "github.com/vultr/slinkee/spec/clientset/v1"
+	api "github.com/vultr/slinkee/pkg/api/types/v1"
+	client "github.com/vultr/slinkee/pkg/clientset/v1"
+
 	"k8s.io/client-go/kubernetes/scheme"
 )
 

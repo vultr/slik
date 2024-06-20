@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	v1s "github.com/vultr/slinkee/spec/api/types/v1"
+	v1s "github.com/vultr/slinkee/pkg/api/types/v1"
 
 	"k8s.io/client-go/kubernetes/fake"
 )
@@ -18,7 +18,7 @@ type Fixture5 struct {
 	description string
 }
 
-func TestCreateWorkload(t *testing.T) {
+func TestCreateSlurm(t *testing.T) {
 	os.Args = append(os.Args, "-config=../../cmd/slinkee/config.yaml")
 
 	client := fake.NewSimpleClientset()

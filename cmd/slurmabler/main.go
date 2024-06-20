@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/vultr/slinkee/cmd/slurmabler/config"
-	"github.com/vultr/slinkee/spec/connectors"
-	"github.com/vultr/slinkee/spec/labeler"
-	"github.com/vultr/slinkee/spec/slurm"
+	"github.com/vultr/slinkee/pkg/connectors"
+	"github.com/vultr/slinkee/pkg/labeler"
+	"github.com/vultr/slinkee/pkg/slurm"
 
 	"go.uber.org/zap"
 )

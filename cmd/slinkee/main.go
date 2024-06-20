@@ -7,9 +7,9 @@ import (
 
 	"github.com/vultr/slinkee/cmd/slinkee/config"
 	"github.com/vultr/slinkee/cmd/slinkee/metrics"
-	"github.com/vultr/slinkee/spec/helpers"
-	"github.com/vultr/slinkee/spec/probes"
-	"github.com/vultr/slinkee/spec/reconciler"
+	"github.com/vultr/slinkee/pkg/helpers"
+	"github.com/vultr/slinkee/pkg/probes"
+	"github.com/vultr/slinkee/pkg/reconciler"
 
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"

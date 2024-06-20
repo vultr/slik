@@ -6,8 +6,8 @@ import (
 	"fmt"
 
 	"github.com/vultr/slinkee/cmd/slinkee/config"
-	v1s "github.com/vultr/slinkee/spec/api/types/v1"
-	"github.com/vultr/slinkee/spec/munge"
+	v1s "github.com/vultr/slinkee/pkg/api/types/v1"
+	"github.com/vultr/slinkee/pkg/munge"
 
 	"go.uber.org/zap"
 	v1 "k8s.io/api/core/v1"

@@ -17,7 +17,7 @@ type Fixture6 struct {
 	description string
 }
 
-func TestWorkloadDelete(t *testing.T) {
+func TestSlurmDelete(t *testing.T) {
 	client := fake.NewSimpleClientset(
 		&batchv1.JobList{
 			Items: jobsFixture,

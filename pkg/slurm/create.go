@@ -1,7 +1,7 @@
 package slurm
 
 import (
-	v1s "github.com/vultr/slinkee/spec/api/types/v1"
+	v1s "github.com/vultr/slinkee/pkg/api/types/v1"
 
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes"

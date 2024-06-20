@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	v1s "github.com/vultr/slinkee/spec/api/types/v1"
-	"github.com/vultr/slinkee/spec/connectors"
-	"github.com/vultr/slinkee/spec/slurm"
+	v1s "github.com/vultr/slinkee/pkg/api/types/v1"
+	"github.com/vultr/slinkee/pkg/connectors"
+	"github.com/vultr/slinkee/pkg/slurm"
 
 	"go.uber.org/zap"
 	"k8s.io/apimachinery/pkg/api/errors"

@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/vultr/slinkee/cmd/slinkee/config"
-	v1s "github.com/vultr/slinkee/spec/api/types/v1"
+	v1s "github.com/vultr/slinkee/pkg/api/types/v1"
 
 	"go.uber.org/zap"
 	appsv1 "k8s.io/api/apps/v1"

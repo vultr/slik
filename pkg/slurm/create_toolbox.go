@@ -5,17 +5,16 @@ import (
 	"fmt"
 
 	"github.com/vultr/slinkee/cmd/slinkee/config"
-	v1s "github.com/vultr/slinkee/spec/api/types/v1"
+	v1s "github.com/vultr/slinkee/pkg/api/types/v1"
 
 	"go.uber.org/zap"
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/client-go/kubernetes"
 )
 
-func buildSlurmrestdDeployment(client kubernetes.Interface, wl *v1s.Slinkee) error {
+func buildToolboxDeployment(client kubernetes.Interface, wl *v1s.Slinkee) error {
 	log := zap.L().Sugar()
 
 	ds := client.AppsV1().Deployments(wl.Namespace)
@@ -26,28 +25,28 @@ func buildSlurmrestdDeployment(client kubernetes.Interface, wl *v1s.Slinkee) err
 	}
 
 	mungeCont := mkMungeContainer(wl)
-	slurmrestdCont := mkSlurmrestdContainer(wl)
+	slurmToolboxCont := mkSlurmToolboxContainer(wl)
 
 	log.Infof("munged container: %+v", *mungeCont)
-	log.Infof("slurmrestd container: %+v", *slurmrestdCont)
+	log.Infof("slurm-toolbox container: %+v", *slurmToolboxCont)
 
 	if aff != nil {
 		log.Infof("affinity: %+v", *aff)
 	}
 
-	slurmrestdDep := &appsv1.Deployment{
+	slurmToolboxDep := &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      fmt.Sprintf("%s-slurmrestd", wl.Name),
+			Name:      fmt.Sprintf("%s-slurm-toolbox", wl.Name),
 			Namespace: wl.Namespace,
 			Labels: map[string]string{
-				"app":                          fmt.Sprintf("%s-slurmrestd", wl.Name),
+				"app":                          "slurm-toolbox",
 				"app.kubernetes.io/managed-by": "slinkee",
 			},
 		},
 		Spec: appsv1.DeploymentSpec{
 			Selector: &metav1.LabelSelector{
 				MatchLabels: map[string]string{
-					"app": fmt.Sprintf("%s-slurmrestd", wl.Name),
+					"app": "slurm-toolbox",
 				},
 			},
 			Template: v1.PodTemplateSpec{
@@ -55,7 +54,7 @@ func buildSlurmrestdDeployment(client kubernetes.Interface, wl *v1s.Slinkee) err
 					Name:      wl.Name,
 					Namespace: wl.Namespace,
 					Labels: map[string]string{
-						"app":                          fmt.Sprintf("%s-slurmrestd", wl.Name),
+						"app":                          "slurm-toolbox",
 						"app.kubernetes.io/managed-by": "slinkee",
 					},
 				},
@@ -65,7 +64,7 @@ func buildSlurmrestdDeployment(client kubernetes.Interface, wl *v1s.Slinkee) err
 						*mungeCont,
 					},
 					Containers: []v1.Container{
-						*slurmrestdCont,
+						*slurmToolboxCont,
 					},
 					RestartPolicy:    v1.RestartPolicyAlways,
 					ImagePullSecrets: []v1.LocalObjectReference{},
@@ -102,64 +101,22 @@ func buildSlurmrestdDeployment(client kubernetes.Interface, wl *v1s.Slinkee) err
 		},
 	}
 
-	log.Infof("slurmrestd deployment: %+v", slurmrestdDep)
+	log.Infof("slurm_toolbox deployment: %+v", slurmToolboxDep)
 
-	_, err2 := ds.Create(context.TODO(), slurmrestdDep, metav1.CreateOptions{})
+	_, err2 := ds.Create(context.TODO(), slurmToolboxDep, metav1.CreateOptions{})
 	if err2 != nil {
 		return err2
 	}
 
-	log.Infof("slurmrestd deployments %s created", wl.Name)
+	log.Infof("slurm_toolbox deployments %s created", wl.Name)
 
 	return nil
 }
 
-func buildSlurmrestdService(client kubernetes.Interface, wl *v1s.Slinkee) error {
-	log := zap.L().Sugar()
-
-	svc := client.CoreV1().Services(wl.Namespace)
-
-	svcSpec := &v1.Service{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      fmt.Sprintf("%s-slurmrestd", wl.Name),
-			Namespace: wl.Namespace,
-			Labels: map[string]string{
-				"app":                          fmt.Sprintf("%s-slurmrestd", wl.Name),
-				"app.kubernetes.io/managed-by": "slinkee",
-			},
-		},
-		Spec: v1.ServiceSpec{
-			Type: v1.ServiceTypeClusterIP,
-			Ports: []v1.ServicePort{
-				{
-					Name:       "slurmrestd",
-					Port:       6820,
-					Protocol:   v1.ProtocolTCP,
-					TargetPort: intstr.FromString("slurmrestd"),
-				},
-			},
-			Selector: map[string]string{
-				"app": fmt.Sprintf("%s-slurmrestd", wl.Name),
-			},
-		},
-	}
-
-	log.Infof("slurmrestd service: %+v", svcSpec)
-
-	_, err2 := svc.Create(context.TODO(), svcSpec, metav1.CreateOptions{})
-	if err2 != nil {
-		return err2
-	}
-
-	log.Infof("slurmrestd service %s created", wl.Name)
-
-	return nil
-}
-
-func mkSlurmrestdContainer(wl *v1s.Slinkee) *v1.Container {
+func mkSlurmToolboxContainer(wl *v1s.Slinkee) *v1.Container {
 	c := v1.Container{
-		Name:  "slurmrestd",
-		Image: config.GetSlurmSlurmrestdImage(),
+		Name:  "slurm-toolbox",
+		Image: config.GetSlurmSlurmToolboxImage(),
 	}
 
 	c.VolumeMounts = []v1.VolumeMount{
@@ -186,17 +143,13 @@ func mkSlurmrestdContainer(wl *v1s.Slinkee) *v1.Container {
 
 	c.Ports = []v1.ContainerPort{
 		{
-			Name:          "slurmrestd",
-			ContainerPort: 6820,
+			Name:          "slurmctld",
+			ContainerPort: 6817,
 		},
-	}
-
-	// slurmrestd will NOT run as root, pull uid/gid from container for the slurm user/group
-	var runAsUser int64 = 64030
-	var runasGroup int64 = 64030
-	c.SecurityContext = &v1.SecurityContext{
-		RunAsUser:  &runAsUser,
-		RunAsGroup: &runasGroup,
+		{
+			Name:          "slurmd",
+			ContainerPort: 6818,
+		},
 	}
 
 	return &c
