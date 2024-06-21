@@ -1,0 +1,12 @@
+---
+apiVersion: "hpc.vultr.com/v1"
+kind: Slik
+metadata:
+  name: full
+spec:
+  namespace: default
+  slurmdbd: true
+  slurmrestd: true
+  mariadb:
+    storage_size: 50G
+    storage_class: vultr-block-storage-hdd-retain

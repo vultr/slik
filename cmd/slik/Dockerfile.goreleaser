@@ -1,0 +1,9 @@
+FROM ubuntu:22.04
+
+RUN apt update && apt install -y ca-certificates
+
+WORKDIR /app
+COPY slik slik
+COPY cmd/slik/config.yaml config.yaml
+
+CMD "/app/slik"

@@ -1,0 +1,109 @@
+version: 2
+
+before:
+  hooks:
+    - go mod download
+
+builds:
+  - id: slik
+    main: ./cmd/slik/main.go
+    binary: slik
+    env:
+      - CGO_ENABLED=0
+    mod_timestamp: "{{ .CommitTimestamp }}"
+    flags:
+      - -trimpath #removes all file system paths from the compiled executable
+    goos:
+      - linux
+    goarch:
+      - amd64
+      - arm64
+
+  - id: slurmabler
+    main: ./cmd/slurmabler/main.go
+    binary: slurmabler
+    env:
+      - CGO_ENABLED=0
+    mod_timestamp: "{{ .CommitTimestamp }}"
+    flags:
+      - -trimpath #removes all file system paths from the compiled executable
+    goos:
+      - linux
+    goarch:
+      - amd64
+      - arm64
+
+dockers:
+  - dockerfile: cmd/slik/Dockerfile.goreleaser
+    use: buildx
+    build_flag_templates:
+    - "--pull"
+    - "--platform=linux/amd64"
+    image_templates:
+      - "ewr.vultrcr.com/slurm/slik:latest-amd64"
+      - "ewr.vultrcr.com/slurm/slik:{{ .Tag }}-amd64"
+    extra_files:
+      - "cmd/slik/config.yaml"
+    ids:
+      - slik
+  
+  - dockerfile: cmd/slik/Dockerfile.goreleaser
+    use: buildx
+    goarch: arm64
+    build_flag_templates:
+    - "--pull"
+    - "--platform=linux/arm64/v8"
+    image_templates:
+      - "ewr.vultrcr.com/slurm/slik:latest-arm64"
+      - "ewr.vultrcr.com/slurm/slik:{{ .Tag }}-arm64"
+    extra_files:
+      - "cmd/slik/config.yaml"
+    ids:
+      - slik
+
+  - dockerfile: cmd/slurmabler/Dockerfile.goreleaser
+    use: buildx
+    build_flag_templates:
+    - "--pull"
+    - "--platform=linux/amd64"
+    image_templates:
+      - "ewr.vultrcr.com/slurm/slurmabler:latest-amd64"
+      - "ewr.vultrcr.com/slurm/slurmabler:{{ .Tag }}-amd64"
+    ids:
+      - slurmabler
+
+  - dockerfile: cmd/slurmabler/Dockerfile.goreleaser
+    use: buildx
+    goarch: arm64
+    build_flag_templates:
+    - "--pull"
+    - "--platform=linux/arm64/v8"
+    image_templates:
+      - "ewr.vultrcr.com/slurm/slurmabler:latest-arm64"
+      - "ewr.vultrcr.com/slurm/slurmabler:{{ .Tag }}-arm64"
+    ids:
+      - slurmabler
+
+docker_manifests:
+  - name_template: 'ewr.vultrcr.com/slurm/slik:latest'
+    image_templates:
+    - 'ewr.vultrcr.com/slurm/slik:latest-amd64'
+    - 'ewr.vultrcr.com/slurm/slik:latest-arm64'
+
+  - name_template: 'ewr.vultrcr.com/slurm/slik:{{ .Tag }}'
+    image_templates:
+    - 'ewr.vultrcr.com/slurm/slik:{{ .Tag }}-amd64'
+    - 'ewr.vultrcr.com/slurm/slik:{{ .Tag }}-arm64'
+
+  - name_template: 'ewr.vultrcr.com/slurm/slurmabler:latest'
+    image_templates:
+      - 'ewr.vultrcr.com/slurm/slurmabler:latest-amd64'
+      - 'ewr.vultrcr.com/slurm/slurmabler:latest-arm64'
+
+  - name_template: 'ewr.vultrcr.com/slurm/slurmabler:{{ .Tag }}'
+    image_templates:
+      - 'ewr.vultrcr.com/slurm/slurmabler:{{ .Tag }}-amd64'
+      - 'ewr.vultrcr.com/slurm/slurmabler:{{ .Tag }}-arm64'
+
+release:
+  draft: false

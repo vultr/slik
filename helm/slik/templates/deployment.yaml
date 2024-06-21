@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: slik-operator
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+  annotations:
+    meta.helm.sh/release-namespace: {{ .Release.Namespace }}
+    prometheus.io/scrape: 'true'
+    prometheus.io/path: '/metrics'
+    prometheus.io/port: '{{ .Values.slik.probes_api.port }}'
+  name: slik-operator
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: slik-operator
+  template:
+    metadata:
+      labels:
+        app: slik-operator
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/cm.yaml") . | sha256sum }}
+        prometheus.io/scrape: 'true'
+        prometheus.io/path: '/metrics'
+        prometheus.io/port: '{{ .Values.slik.probes_api.port }}'
+    spec:
+      serviceAccountName: slik
+      imagePullSecrets:
+      - name: vcr
+      containers:
+      - image: "{{ .Values.slik.repository }}:{{ .Values.slik.tag }}"
+        name: slik
+        imagePullPolicy: "Always"
+        command: [/app/slik]
+        args: ["-config", "/app/etc/config.yaml"]
+        resources:
+          limits:
+            memory: {{ .Values.slik.resources.limits.memory | quote }}
+          requests:
+            memory: {{ .Values.slik.resources.requests.memory | quote }}
+        ports:
+          - containerPort: {{ .Values.slik.probes_api.port }}
+            name: probes
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: probes
+          failureThreshold: 2
+          periodSeconds: 3
+          initialDelaySeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: probes
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        volumeMounts:
+        - name: slik-operator
+          mountPath: /app/etc
+      volumes:
+      - name: slik-operator
+        configMap:
+          name: slik-operator
