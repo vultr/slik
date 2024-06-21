@@ -1,6 +1,6 @@
 slik:
   repository: ewr.vultrcr.com/slurm/slik
-  tag: v0.0.2
+  tag: v0.0.3
   resources:
     requests:
       memory: "1Gi"
@@ -16,19 +16,19 @@ slik:
 
 slurm:
   slurmabler:
-    image: "ewr.vultrcr.com/slurm/slurmabler:v0.0.2"
+    image: "ewr.vultrcr.com/slurm/slurmabler:v0.0.3"
     service_account: "slik"
   munged:
-    image: "ewr.vultrcr.com/slurm/munged:v0.0.2"
+    image: "ewr.vultrcr.com/slurm/munged:v0.0.3"
   slurmctld:
-    image: "ewr.vultrcr.com/slurm/slurmctld:v0.0.2"
+    image: "ewr.vultrcr.com/slurm/slurmctld:v0.0.3"
   slurmd:
-    image: "ewr.vultrcr.com/slurm/slurmd:v0.0.2"
+    image: "ewr.vultrcr.com/slurm/slurmd:v0.0.3"
   slurm_toolbox:
-    image: "ewr.vultrcr.com/slurm/toolbox:v0.0.2"
+    image: "ewr.vultrcr.com/slurm/toolbox:v0.0.3"
   mariadb:
     image: "mariadb:11.4.2-noble"
   slurmdbd:
-    image: "ewr.vultrcr.com/slurm/slurmdbd:v0.0.2"
+    image: "ewr.vultrcr.com/slurm/slurmdbd:v0.0.3"
   slurmrestd:
-    image: "ewr.vultrcr.com/slurm/slurmrestd:v0.0.2"
+    image: "ewr.vultrcr.com/slurm/slurmrestd:v0.0.3"
