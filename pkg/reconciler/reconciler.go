@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	v1s "github.com/vultr/slinkee/pkg/api/types/v1"
-	"github.com/vultr/slinkee/pkg/connectors"
-	"github.com/vultr/slinkee/pkg/slurm"
+	v1s "github.com/vultr/slik/pkg/api/types/v1"
+	"github.com/vultr/slik/pkg/connectors"
+	"github.com/vultr/slik/pkg/slurm"
 
 	"go.uber.org/zap"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -60,25 +60,25 @@ func loop() error {
 
 	log.Info("reconciling...")
 
-	slurmcs, err := connectors.GetSlinkeeClientset()
+	slurmcs, err := connectors.GetSlikClientset()
 	if err != nil {
 		return err
 	}
 
-	slinkees, err := slurmcs.Slinkee(context.TODO()).List(v1.ListOptions{})
+	sliks, err := slurmcs.Slik(context.TODO()).List(v1.ListOptions{})
 	if err != nil {
 		if !errors.IsNotFound(err) {
 			return err
 		}
 	}
 
-	for i := range slinkees.Items {
-		log.Infof("on slinkee cluster: %s, %+v",
-			slinkees.Items[i].Name,
-			slinkees.Items[i],
+	for i := range sliks.Items {
+		log.Infof("on slik cluster: %s, %+v",
+			sliks.Items[i].Name,
+			sliks.Items[i],
 		)
 
-		s := slinkees.Items[i]
+		s := sliks.Items[i]
 
 		if s.DeletionTimestamp != nil { // delete resource if it's not null
 			log.Infof("deleting slurm cluster: %s", s.Name)
@@ -98,7 +98,7 @@ func loop() error {
 
 			s.ObjectMeta.Finalizers = []string{}
 
-			if _, err := slurmcs.Slinkee(context.TODO()).Update(&s, v1.UpdateOptions{}); err != nil {
+			if _, err := slurmcs.Slik(context.TODO()).Update(&s, v1.UpdateOptions{}); err != nil {
 				log.Error(err)
 
 				continue
@@ -114,7 +114,7 @@ func loop() error {
 			switch checks(&s) {
 			case true:
 				s.Status.State = StatePending
-				s2, err := slurmcs.Slinkee(context.TODO()).UpdateStatus(&s, v1.UpdateOptions{})
+				s2, err := slurmcs.Slik(context.TODO()).UpdateStatus(&s, v1.UpdateOptions{})
 				if err != nil {
 					log.Error(err)
 
@@ -122,10 +122,10 @@ func loop() error {
 				}
 
 				s2.ObjectMeta.Finalizers = []string{
-					"slinkees.hpc.vultr.com",
+					"sliks.hpc.vultr.com",
 				}
 
-				if _, err := slurmcs.Slinkee(context.TODO()).Update(s2, v1.UpdateOptions{}); err != nil {
+				if _, err := slurmcs.Slik(context.TODO()).Update(s2, v1.UpdateOptions{}); err != nil {
 					log.Error(err)
 
 					continue
@@ -133,7 +133,7 @@ func loop() error {
 			case false:
 				s.Status.State = StateFailed
 
-				if _, err := slurmcs.Slinkee(context.TODO()).UpdateStatus(&s, v1.UpdateOptions{}); err != nil {
+				if _, err := slurmcs.Slik(context.TODO()).UpdateStatus(&s, v1.UpdateOptions{}); err != nil {
 					log.Error(err)
 
 					continue
@@ -156,7 +156,7 @@ func loop() error {
 			}
 
 			s.Status.State = StateActive
-			if _, err := slurmcs.Slinkee(context.TODO()).UpdateStatus(&s, v1.UpdateOptions{}); err != nil {
+			if _, err := slurmcs.Slik(context.TODO()).UpdateStatus(&s, v1.UpdateOptions{}); err != nil {
 				log.Error(err)
 
 				continue
@@ -169,7 +169,7 @@ func loop() error {
 			switch checks(&s) {
 			case true:
 				s.Status.State = ""
-				_, err := slurmcs.Slinkee(context.TODO()).UpdateStatus(&s, v1.UpdateOptions{})
+				_, err := slurmcs.Slik(context.TODO()).UpdateStatus(&s, v1.UpdateOptions{})
 				if err != nil {
 					log.Error(err)
 
@@ -185,7 +185,7 @@ func loop() error {
 }
 
 // checks returns true if all checks pass
-func checks(s *v1s.Slinkee) bool {
+func checks(s *v1s.Slik) bool {
 	log := zap.L().Sugar()
 
 	// these checks only matter if a db is in use

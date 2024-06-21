@@ -1,6 +1,6 @@
 ---
 apiVersion: "hpc.vultr.com/v1"
-kind: Slinkee
+kind: Slik
 metadata:
   name: full
 spec:

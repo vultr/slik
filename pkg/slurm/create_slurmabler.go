@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/vultr/slinkee/cmd/slinkee/config"
-	v1s "github.com/vultr/slinkee/pkg/api/types/v1"
+	"github.com/vultr/slik/cmd/slik/config"
+	v1s "github.com/vultr/slik/pkg/api/types/v1"
 
 	"go.uber.org/zap"
 	appsv1 "k8s.io/api/apps/v1"
@@ -15,7 +15,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
-func buildSlurmablerDaemonSet(client kubernetes.Interface, wl *v1s.Slinkee) error {
+func buildSlurmablerDaemonSet(client kubernetes.Interface, wl *v1s.Slik) error {
 	log := zap.L().Sugar()
 
 	ds := client.AppsV1().DaemonSets(wl.Namespace)
@@ -39,7 +39,7 @@ func buildSlurmablerDaemonSet(client kubernetes.Interface, wl *v1s.Slinkee) erro
 			Namespace: wl.Namespace,
 			Labels: map[string]string{
 				"app":                          "slurmabler",
-				"app.kubernetes.io/managed-by": "slinkee",
+				"app.kubernetes.io/managed-by": "slik",
 			},
 		},
 		Spec: appsv1.DaemonSetSpec{
@@ -54,7 +54,7 @@ func buildSlurmablerDaemonSet(client kubernetes.Interface, wl *v1s.Slinkee) erro
 					Namespace: wl.Namespace,
 					Labels: map[string]string{
 						"app":                          "slurmabler",
-						"app.kubernetes.io/managed-by": "slinkee",
+						"app.kubernetes.io/managed-by": "slik",
 					},
 				},
 				Spec: v1.PodSpec{
@@ -89,7 +89,7 @@ func buildSlurmablerDaemonSet(client kubernetes.Interface, wl *v1s.Slinkee) erro
 		for i := range nodes.Items {
 			labels := nodes.Items[i].GetLabels()
 
-			_, ok := labels["slinkee.vultr.com/real_memory"]
+			_, ok := labels["slik.vultr.com/real_memory"]
 
 			if ok {
 				lablesSet++
@@ -108,7 +108,7 @@ func buildSlurmablerDaemonSet(client kubernetes.Interface, wl *v1s.Slinkee) erro
 	return nil
 }
 
-func mkSlurmablerContainer(wl *v1s.Slinkee) *v1.Container {
+func mkSlurmablerContainer(wl *v1s.Slik) *v1.Container {
 	var root int64 = 0
 	var privileged bool = true
 

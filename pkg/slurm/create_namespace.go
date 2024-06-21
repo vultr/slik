@@ -3,7 +3,7 @@ package slurm
 import (
 	"context"
 
-	v1s "github.com/vultr/slinkee/pkg/api/types/v1"
+	v1s "github.com/vultr/slik/pkg/api/types/v1"
 
 	"go.uber.org/zap"
 	v1 "k8s.io/api/core/v1"
@@ -12,7 +12,7 @@ import (
 )
 
 // buildNamespace creates a kubernetes namespace
-func buildNamespace(client kubernetes.Interface, wl *v1s.Slinkee) error {
+func buildNamespace(client kubernetes.Interface, wl *v1s.Slik) error {
 	log := zap.L().Sugar()
 
 	ns := client.CoreV1().Namespaces()
@@ -21,7 +21,7 @@ func buildNamespace(client kubernetes.Interface, wl *v1s.Slinkee) error {
 		ObjectMeta: metav1.ObjectMeta{
 			Name: wl.Namespace,
 			Labels: map[string]string{
-				"app.kubernetes.io/managed-by": "slinkee",
+				"app.kubernetes.io/managed-by": "slik",
 			},
 		},
 	}

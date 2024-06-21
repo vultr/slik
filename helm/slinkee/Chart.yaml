@@ -1,10 +1,10 @@
 apiVersion: v2
-name: slinkee
+name: slik
 version: 0.0.1
-description: A Helm chart for slinkee
+description: A Helm chart for slik
 type: application
-home: https://github.com/vultr/slinkee
+home: https://github.com/vultr/slik
 sources:
-  - https://github.com/vultr/slinkee
+  - https://github.com/vultr/slik
 maintainers:
   - name: Josten Landtroop

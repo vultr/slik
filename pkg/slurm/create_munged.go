@@ -5,9 +5,9 @@ import (
 	b64 "encoding/base64"
 	"fmt"
 
-	"github.com/vultr/slinkee/cmd/slinkee/config"
-	v1s "github.com/vultr/slinkee/pkg/api/types/v1"
-	"github.com/vultr/slinkee/pkg/munge"
+	"github.com/vultr/slik/cmd/slik/config"
+	v1s "github.com/vultr/slik/pkg/api/types/v1"
+	"github.com/vultr/slik/pkg/munge"
 
 	"go.uber.org/zap"
 	v1 "k8s.io/api/core/v1"
@@ -16,7 +16,7 @@ import (
 )
 
 // buildMungedConfigMap creates munged configmap with the munge.key
-func buildMungedConfigMap(client kubernetes.Interface, wl *v1s.Slinkee) error {
+func buildMungedConfigMap(client kubernetes.Interface, wl *v1s.Slik) error {
 	log := zap.L().Sugar()
 
 	cm := client.CoreV1().ConfigMaps(wl.Namespace)
@@ -38,7 +38,7 @@ func buildMungedConfigMap(client kubernetes.Interface, wl *v1s.Slinkee) error {
 			Name:      name,
 			Namespace: wl.Namespace,
 			Labels: map[string]string{
-				"app.kubernetes.io/managed-by": "slinkee",
+				"app.kubernetes.io/managed-by": "slik",
 			},
 		},
 		BinaryData: map[string][]byte{
@@ -58,7 +58,7 @@ func buildMungedConfigMap(client kubernetes.Interface, wl *v1s.Slinkee) error {
 	return nil
 }
 
-func mkMungeContainer(wl *v1s.Slinkee) *v1.Container {
+func mkMungeContainer(wl *v1s.Slik) *v1.Container {
 	c := v1.Container{
 		Name:  "munged",
 		Image: config.GetSlurmMungedImage(),

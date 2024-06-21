@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	v1s "github.com/vultr/slinkee/pkg/api/types/v1"
+	v1s "github.com/vultr/slik/pkg/api/types/v1"
 
 	"go.uber.org/zap"
 	v1 "k8s.io/api/core/v1"
@@ -18,7 +18,7 @@ import (
 
 // SlurmConf configuration for generation of slurm.conf
 type SlurmConf struct {
-	SlinkeeName string
+	SlikName string
 
 	SlurmdNodes []SlurmdNode
 	Slurmdbd    bool
@@ -33,7 +33,7 @@ type SlurmdNode struct {
 }
 
 // NewSlurmConf bilds SlurmConf for templating out slurm.conf
-func NewSlurmConf(client kubernetes.Interface, wl *v1s.Slinkee) (*SlurmConf, error) {
+func NewSlurmConf(client kubernetes.Interface, wl *v1s.Slik) (*SlurmConf, error) {
 	log := zap.L().Sugar()
 
 	nodes, err := GetAllNodes(client)
@@ -44,17 +44,17 @@ func NewSlurmConf(client kubernetes.Interface, wl *v1s.Slinkee) (*SlurmConf, err
 	var conf SlurmConf
 	for i := range nodes.Items {
 		labels := nodes.Items[i].GetLabels()
-		cpusS, ok := labels["slinkee.vultr.com/cpus"]
+		cpusS, ok := labels["slik.vultr.com/cpus"]
 		if !ok {
 			continue
 		}
 
-		memoryS, ok := labels["slinkee.vultr.com/real_memory"]
+		memoryS, ok := labels["slik.vultr.com/real_memory"]
 		if !ok {
 			continue
 		}
 
-		threadsPerCoreS, ok := labels["slinkee.vultr.com/threads_per_core"]
+		threadsPerCoreS, ok := labels["slik.vultr.com/threads_per_core"]
 		if !ok {
 			continue
 		}
@@ -84,7 +84,7 @@ func NewSlurmConf(client kubernetes.Interface, wl *v1s.Slinkee) (*SlurmConf, err
 		})
 	}
 
-	conf.SlinkeeName = wl.Name
+	conf.SlikName = wl.Name
 	conf.Slurmdbd = wl.Spec.Slurmdbd
 
 	log.Infof("slurmconf: %+v", conf)
@@ -93,7 +93,7 @@ func NewSlurmConf(client kubernetes.Interface, wl *v1s.Slinkee) (*SlurmConf, err
 }
 
 // buildSlurmconfConfigMap creates slurm.conf configmap with slurm.conf
-func buildSlurmconfConfigMap(client kubernetes.Interface, wl *v1s.Slinkee) error {
+func buildSlurmconfConfigMap(client kubernetes.Interface, wl *v1s.Slik) error {
 	log := zap.L().Sugar()
 
 	cm := client.CoreV1().ConfigMaps(wl.Namespace)
@@ -121,7 +121,7 @@ func buildSlurmconfConfigMap(client kubernetes.Interface, wl *v1s.Slinkee) error
 			Name:      name,
 			Namespace: wl.Namespace,
 			Labels: map[string]string{
-				"app.kubernetes.io/managed-by": "slinkee",
+				"app.kubernetes.io/managed-by": "slik",
 			},
 		},
 		Data: map[string]string{

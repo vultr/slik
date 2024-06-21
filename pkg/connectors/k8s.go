@@ -4,8 +4,8 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 
-	api "github.com/vultr/slinkee/pkg/api/types/v1"
-	client "github.com/vultr/slinkee/pkg/clientset/v1"
+	api "github.com/vultr/slik/pkg/api/types/v1"
+	client "github.com/vultr/slik/pkg/clientset/v1"
 
 	"k8s.io/client-go/kubernetes/scheme"
 )
@@ -25,8 +25,8 @@ func GetKubernetesConn() (*kubernetes.Clientset, error) {
 	return clientset, nil
 }
 
-// GetSlinkeeClientset returns a slinkee clientset to interact with the k8s cluster
-func GetSlinkeeClientset() (*client.V1Client, error) {
+// GetSlikClientset returns a slik clientset to interact with the k8s cluster
+func GetSlikClientset() (*client.V1Client, error) {
 	if err := api.AddToScheme(scheme.Scheme); err != nil {
 		return nil, err
 	}

@@ -1,14 +1,12 @@
-# SLinKee (SLurm in KubernEtEs)
+# SLiK (SLurm in Kubernetes)
 
 ## Overview
 An operator to deploy slurm in kubernetes.
 
-[Everyone loves a slinky](https://www.youtube.com/watch?v=ltwxC19s5u8)
-
 ## Usage
 Everything is public, including the slurm images. You do not need any auth or secret sauce to use this. If you intend to use in a different cloud platform you may need to make tweaks to the mariadb statefulset. If you intend to deploy slurm on arm you'll need to build arm images.
 
-You can deploy slinkee into your kubernetes cluster simply with: `helm install -f helm/slinkee/values.yaml slinkee ./helm/slinkee/`
+You can deploy slik into your kubernetes cluster simply with: `helm install -f helm/slik/values.yaml slik ./helm/slik/`
 
 You can then deploy a slurm cluster with one of the samples: `kubectl apply -f payloads/simple.yaml`
 
@@ -20,7 +18,7 @@ Sample yaml:
 
 ```yaml
 apiVersion: "hpc.vultr.com/v1"
-kind: Slinkee
+kind: Slik
 metadata:
   name: full
 spec:
@@ -34,13 +32,11 @@ spec:
 
 Update operations are not currently supported, you should rebuild the cluster instead. Delete the slurm deployment, then re-create it. If you use a PVC that is retained you should not lose any data.
 
-You can list the slurm clusters: `kubectl get slinkees`
+You can list the slurm clusters: `kubectl get sliks`
 
-You can delete slurm clusters: `kubectl delete slinkee <name>`
+You can delete slurm clusters: `kubectl delete slik <name>`
 
-If you need to troubleshoot, check the logs for the operator: `kubectl logs slinkee-operator...`
-
-![Video summarizing usage](./docs/slinkee.mp4)
+If you need to troubleshoot, check the logs for the operator: `kubectl logs slik-operator...`
 
 ## Contribution(s)
 Please send any PRs for contributions/suggestions.

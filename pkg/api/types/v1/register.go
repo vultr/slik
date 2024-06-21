@@ -18,8 +18,8 @@ var (
 
 func addKnownTypes(scheme *runtime.Scheme) error {
 	scheme.AddKnownTypes(SchemeGroupVersion,
-		&Slinkee{},
-		&SlinkeeList{},
+		&Slik{},
+		&SlikList{},
 	)
 
 	metav1.AddToGroupVersion(scheme, SchemeGroupVersion)

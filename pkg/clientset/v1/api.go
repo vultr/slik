@@ -3,7 +3,7 @@ package v1
 import (
 	"context"
 
-	v1 "github.com/vultr/slinkee/pkg/api/types/v1"
+	v1 "github.com/vultr/slik/pkg/api/types/v1"
 
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/kubernetes/scheme"
@@ -11,7 +11,7 @@ import (
 )
 
 type V1Interface interface {
-	Slinkee(ctx context.Context) SlinkeeInterface
+	Slik(ctx context.Context) SlikInterface
 }
 
 type V1Client struct {
@@ -33,8 +33,8 @@ func NewForConfig(c *rest.Config) (*V1Client, error) {
 	return &V1Client{restClient: client}, nil
 }
 
-func (c *V1Client) Slinkee(ctx context.Context) SlinkeeInterface {
-	return &slinkeeClient{
+func (c *V1Client) Slik(ctx context.Context) SlikInterface {
+	return &slikClient{
 		restClient: c.restClient,
 		ctx:        ctx,
 	}

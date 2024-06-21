@@ -2,45 +2,45 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: slinkee-operator
+    app: slik-operator
     app.kubernetes.io/managed-by: {{ .Release.Service }}
   annotations:
     meta.helm.sh/release-namespace: {{ .Release.Namespace }}
     prometheus.io/scrape: 'true'
     prometheus.io/path: '/metrics'
-    prometheus.io/port: '{{ .Values.slinkee.probes_api.port }}'
-  name: slinkee-operator
+    prometheus.io/port: '{{ .Values.slik.probes_api.port }}'
+  name: slik-operator
   namespace: {{ .Release.Namespace }}
 spec:
   selector:
     matchLabels:
-      app: slinkee-operator
+      app: slik-operator
   template:
     metadata:
       labels:
-        app: slinkee-operator
+        app: slik-operator
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/cm.yaml") . | sha256sum }}
         prometheus.io/scrape: 'true'
         prometheus.io/path: '/metrics'
-        prometheus.io/port: '{{ .Values.slinkee.probes_api.port }}'
+        prometheus.io/port: '{{ .Values.slik.probes_api.port }}'
     spec:
-      serviceAccountName: slinkee
+      serviceAccountName: slik
       imagePullSecrets:
       - name: vcr
       containers:
-      - image: "{{ .Values.slinkee.repository }}:{{ .Values.slinkee.tag }}"
-        name: slinkee
+      - image: "{{ .Values.slik.repository }}:{{ .Values.slik.tag }}"
+        name: slik
         imagePullPolicy: "Always"
-        command: [/app/slinkee]
+        command: [/app/slik]
         args: ["-config", "/app/etc/config.yaml"]
         resources:
           limits:
-            memory: {{ .Values.slinkee.resources.limits.memory | quote }}
+            memory: {{ .Values.slik.resources.limits.memory | quote }}
           requests:
-            memory: {{ .Values.slinkee.resources.requests.memory | quote }}
+            memory: {{ .Values.slik.resources.requests.memory | quote }}
         ports:
-          - containerPort: {{ .Values.slinkee.probes_api.port }}
+          - containerPort: {{ .Values.slik.probes_api.port }}
             name: probes
         livenessProbe:
           httpGet:
@@ -56,9 +56,9 @@ spec:
           initialDelaySeconds: 10
           periodSeconds: 5
         volumeMounts:
-        - name: slinkee-operator
+        - name: slik-operator
           mountPath: /app/etc
       volumes:
-      - name: slinkee-operator
+      - name: slik-operator
         configMap:
-          name: slinkee-operator
+          name: slik-operator

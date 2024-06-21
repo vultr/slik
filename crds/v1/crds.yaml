@@ -1,7 +1,7 @@
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  name: slinkees.hpc.vultr.com
+  name: sliks.hpc.vultr.com
 spec:
   group: hpc.vultr.com
   versions:
@@ -54,10 +54,8 @@ spec:
         status: {}
   scope: Namespaced
   names:
-    plural: slinkees
-    singular: slinkee
-    kind: Slinkee
+    plural: sliks
+    singular: slik
+    kind: Slik
     shortNames:
-    - slinkee
-    - slink
-    - slurm
+    - slik

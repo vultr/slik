@@ -1,4 +1,4 @@
-module github.com/vultr/slinkee
+module github.com/vultr/slik
 
 go 1.22.0
 

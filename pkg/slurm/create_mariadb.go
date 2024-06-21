@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/vultr/slinkee/cmd/slinkee/config"
-	v1s "github.com/vultr/slinkee/pkg/api/types/v1"
+	"github.com/vultr/slik/cmd/slik/config"
+	v1s "github.com/vultr/slik/pkg/api/types/v1"
 
 	"go.uber.org/zap"
 	appsv1 "k8s.io/api/apps/v1"
@@ -17,7 +17,7 @@ import (
 )
 
 // buildSlurmconfConfigMap creates mariadb configmap
-func buildMariaDBConfigMap(client kubernetes.Interface, wl *v1s.Slinkee) error {
+func buildMariaDBConfigMap(client kubernetes.Interface, wl *v1s.Slik) error {
 	log := zap.L().Sugar()
 
 	cm := client.CoreV1().ConfigMaps(wl.Namespace)
@@ -27,7 +27,7 @@ func buildMariaDBConfigMap(client kubernetes.Interface, wl *v1s.Slinkee) error {
 			Name:      fmt.Sprintf("%s-mariadb-config", wl.Name),
 			Namespace: wl.Namespace,
 			Labels: map[string]string{
-				"app.kubernetes.io/managed-by": "slinkee",
+				"app.kubernetes.io/managed-by": "slik",
 			},
 		},
 		Data: map[string]string{
@@ -49,7 +49,7 @@ func buildMariaDBConfigMap(client kubernetes.Interface, wl *v1s.Slinkee) error {
 			Name:      fmt.Sprintf("%s-mariadb-init", wl.Name),
 			Namespace: wl.Namespace,
 			Labels: map[string]string{
-				"app.kubernetes.io/managed-by": "slinkee",
+				"app.kubernetes.io/managed-by": "slik",
 			},
 		},
 		Data: map[string]string{
@@ -69,7 +69,7 @@ func buildMariaDBConfigMap(client kubernetes.Interface, wl *v1s.Slinkee) error {
 	return nil
 }
 
-func buildMariaDBStatefulSet(client kubernetes.Interface, wl *v1s.Slinkee) error {
+func buildMariaDBStatefulSet(client kubernetes.Interface, wl *v1s.Slik) error {
 	log := zap.L().Sugar()
 
 	msts := client.AppsV1().StatefulSets(wl.Namespace)
@@ -93,7 +93,7 @@ func buildMariaDBStatefulSet(client kubernetes.Interface, wl *v1s.Slinkee) error
 			Namespace: wl.Namespace,
 			Labels: map[string]string{
 				"app":                          "mariadb",
-				"app.kubernetes.io/managed-by": "slinkee",
+				"app.kubernetes.io/managed-by": "slik",
 			},
 		},
 		Spec: appsv1.StatefulSetSpec{
@@ -108,7 +108,7 @@ func buildMariaDBStatefulSet(client kubernetes.Interface, wl *v1s.Slinkee) error
 					Namespace: wl.Namespace,
 					Labels: map[string]string{
 						"app":                          "mariadb",
-						"app.kubernetes.io/managed-by": "slinkee",
+						"app.kubernetes.io/managed-by": "slik",
 					},
 				},
 				Spec: v1.PodSpec{
@@ -175,7 +175,7 @@ func buildMariaDBStatefulSet(client kubernetes.Interface, wl *v1s.Slinkee) error
 	return nil
 }
 
-func mkMariaDBContainer(wl *v1s.Slinkee) *v1.Container {
+func mkMariaDBContainer(wl *v1s.Slik) *v1.Container {
 	c := v1.Container{
 		Name:  "mariadb",
 		Image: config.GetSlurmMariaDBImage(),
@@ -229,7 +229,7 @@ func mkMariaDBContainer(wl *v1s.Slinkee) *v1.Container {
 	return &c
 }
 
-func buildMariaDBService(client kubernetes.Interface, wl *v1s.Slinkee) error {
+func buildMariaDBService(client kubernetes.Interface, wl *v1s.Slik) error {
 	log := zap.L().Sugar()
 
 	svc := client.CoreV1().Services(wl.Namespace)
@@ -240,7 +240,7 @@ func buildMariaDBService(client kubernetes.Interface, wl *v1s.Slinkee) error {
 			Namespace: wl.Namespace,
 			Labels: map[string]string{
 				"app":                          "mariadb",
-				"app.kubernetes.io/managed-by": "slinkee",
+				"app.kubernetes.io/managed-by": "slik",
 			},
 		},
 		Spec: v1.ServiceSpec{

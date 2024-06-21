@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/vultr/slinkee/cmd/slinkee/config"
-	v1s "github.com/vultr/slinkee/pkg/api/types/v1"
+	"github.com/vultr/slik/cmd/slik/config"
+	v1s "github.com/vultr/slik/pkg/api/types/v1"
 
 	"go.uber.org/zap"
 	appsv1 "k8s.io/api/apps/v1"
@@ -15,7 +15,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
-func buildSlurmrestdDeployment(client kubernetes.Interface, wl *v1s.Slinkee) error {
+func buildSlurmrestdDeployment(client kubernetes.Interface, wl *v1s.Slik) error {
 	log := zap.L().Sugar()
 
 	ds := client.AppsV1().Deployments(wl.Namespace)
@@ -41,7 +41,7 @@ func buildSlurmrestdDeployment(client kubernetes.Interface, wl *v1s.Slinkee) err
 			Namespace: wl.Namespace,
 			Labels: map[string]string{
 				"app":                          fmt.Sprintf("%s-slurmrestd", wl.Name),
-				"app.kubernetes.io/managed-by": "slinkee",
+				"app.kubernetes.io/managed-by": "slik",
 			},
 		},
 		Spec: appsv1.DeploymentSpec{
@@ -56,7 +56,7 @@ func buildSlurmrestdDeployment(client kubernetes.Interface, wl *v1s.Slinkee) err
 					Namespace: wl.Namespace,
 					Labels: map[string]string{
 						"app":                          fmt.Sprintf("%s-slurmrestd", wl.Name),
-						"app.kubernetes.io/managed-by": "slinkee",
+						"app.kubernetes.io/managed-by": "slik",
 					},
 				},
 				Spec: v1.PodSpec{
@@ -114,7 +114,7 @@ func buildSlurmrestdDeployment(client kubernetes.Interface, wl *v1s.Slinkee) err
 	return nil
 }
 
-func buildSlurmrestdService(client kubernetes.Interface, wl *v1s.Slinkee) error {
+func buildSlurmrestdService(client kubernetes.Interface, wl *v1s.Slik) error {
 	log := zap.L().Sugar()
 
 	svc := client.CoreV1().Services(wl.Namespace)
@@ -125,7 +125,7 @@ func buildSlurmrestdService(client kubernetes.Interface, wl *v1s.Slinkee) error 
 			Namespace: wl.Namespace,
 			Labels: map[string]string{
 				"app":                          fmt.Sprintf("%s-slurmrestd", wl.Name),
-				"app.kubernetes.io/managed-by": "slinkee",
+				"app.kubernetes.io/managed-by": "slik",
 			},
 		},
 		Spec: v1.ServiceSpec{
@@ -156,7 +156,7 @@ func buildSlurmrestdService(client kubernetes.Interface, wl *v1s.Slinkee) error 
 	return nil
 }
 
-func mkSlurmrestdContainer(wl *v1s.Slinkee) *v1.Container {
+func mkSlurmrestdContainer(wl *v1s.Slik) *v1.Container {
 	c := v1.Container{
 		Name:  "slurmrestd",
 		Image: config.GetSlurmSlurmrestdImage(),

@@ -2,9 +2,9 @@ package slurm
 
 var (
 	slurmConfTpl = `
-{{ $slinkeeName := .SlinkeeName }}
+{{ $slikName := .SlikName }}
 ClusterName=cluster
-SlurmctldHost={{ $slinkeeName }}-slurmctld
+SlurmctldHost={{ $slikName }}-slurmctld
 ProctrackType=proctrack/linuxproc
 ReturnToService=2
 SlurmctldPidFile=/run/slurmctld.pid
@@ -27,7 +27,7 @@ SlurmdLogFile=/var/log/slurm/slurmd.log
 {{ if .Slurmdbd -}}
 AccountingStorageType=accounting_storage/slurmdbd
 AccountingStoragePort=6819
-AccountingStorageHost={{ $slinkeeName }}-slurmdbd
+AccountingStorageHost={{ $slikName }}-slurmdbd
 {{ else }}
 AccountingStorageType=accounting_storage/none
 {{ end }}
@@ -35,7 +35,7 @@ AccountingStorageType=accounting_storage/none
 # nodes
 NodeName=DEFAULT State=UNKNOWN CPUs=1 CoresPerSocket=1 ThreadsPerCore=1
 {{ range .SlurmdNodes -}}
-NodeName={{ $slinkeeName }}-{{ .NodeName }} CPUs={{ .CPUs }} RealMemory={{ .RealMemory }} ThreadsPerCore={{ .ThreadsPerCore }}
+NodeName={{ $slikName }}-{{ .NodeName }} CPUs={{ .CPUs }} RealMemory={{ .RealMemory }} ThreadsPerCore={{ .ThreadsPerCore }}
 {{ end }}
 
 # TODO other?
@@ -45,16 +45,16 @@ PartitionName=batch Nodes=ALL Default=YES MaxTime=60 State=Up
 `
 
 	slurmdbdConfTpl = `
-{{ $slinkeeName := .SlinkeeName }}
+{{ $slikName := .SlikName }}
 AuthType=auth/munge
 
-DbdHost={{ $slinkeeName }}-slurmdbd
+DbdHost={{ $slikName }}-slurmdbd
 DbdPort=6819
 
 DebugLevel=verbose
 MessageTimeout=10
 
-StorageHost={{ $slinkeeName }}-mariadb
+StorageHost={{ $slikName }}-mariadb
 StorageLoc=slurmdbd
 StorageUser={{ .User }}
 StoragePass={{ .Pass }}

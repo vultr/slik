@@ -5,9 +5,9 @@ before:
     - go mod download
 
 builds:
-  - id: slinkee
-    main: ./cmd/slinkee/main.go
-    binary: slinkee
+  - id: slik
+    main: ./cmd/slik/main.go
+    binary: slik
     env:
       - CGO_ENABLED=0
     mod_timestamp: "{{ .CommitTimestamp }}"
@@ -34,32 +34,32 @@ builds:
       - arm64
 
 dockers:
-  - dockerfile: cmd/slinkee/Dockerfile.goreleaser
+  - dockerfile: cmd/slik/Dockerfile.goreleaser
     use: buildx
     build_flag_templates:
     - "--pull"
     - "--platform=linux/amd64"
     image_templates:
-      - "ewr.vultrcr.com/slurm/slinkee:latest-amd64"
-      - "ewr.vultrcr.com/slurm/slinkee:{{ .Tag }}-amd64"
+      - "ewr.vultrcr.com/slurm/slik:latest-amd64"
+      - "ewr.vultrcr.com/slurm/slik:{{ .Tag }}-amd64"
     extra_files:
-      - "cmd/slinkee/config.yaml"
+      - "cmd/slik/config.yaml"
     ids:
-      - slinkee
+      - slik
   
-  - dockerfile: cmd/slinkee/Dockerfile.goreleaser
+  - dockerfile: cmd/slik/Dockerfile.goreleaser
     use: buildx
     goarch: arm64
     build_flag_templates:
     - "--pull"
     - "--platform=linux/arm64/v8"
     image_templates:
-      - "ewr.vultrcr.com/slurm/slinkee:latest-arm64"
-      - "ewr.vultrcr.com/slurm/slinkee:{{ .Tag }}-arm64"
+      - "ewr.vultrcr.com/slurm/slik:latest-arm64"
+      - "ewr.vultrcr.com/slurm/slik:{{ .Tag }}-arm64"
     extra_files:
-      - "cmd/slinkee/config.yaml"
+      - "cmd/slik/config.yaml"
     ids:
-      - slinkee
+      - slik
 
   - dockerfile: cmd/slurmabler/Dockerfile.goreleaser
     use: buildx
@@ -85,15 +85,15 @@ dockers:
       - slurmabler
 
 docker_manifests:
-  - name_template: 'ewr.vultrcr.com/slurm/slinkee:latest'
+  - name_template: 'ewr.vultrcr.com/slurm/slik:latest'
     image_templates:
-    - 'ewr.vultrcr.com/slurm/slinkee:latest-amd64'
-    - 'ewr.vultrcr.com/slurm/slinkee:latest-arm64'
+    - 'ewr.vultrcr.com/slurm/slik:latest-amd64'
+    - 'ewr.vultrcr.com/slurm/slik:latest-arm64'
 
-  - name_template: 'ewr.vultrcr.com/slurm/slinkee:{{ .Tag }}'
+  - name_template: 'ewr.vultrcr.com/slurm/slik:{{ .Tag }}'
     image_templates:
-    - 'ewr.vultrcr.com/slurm/slinkee:{{ .Tag }}-amd64'
-    - 'ewr.vultrcr.com/slurm/slinkee:{{ .Tag }}-arm64'
+    - 'ewr.vultrcr.com/slurm/slik:{{ .Tag }}-amd64'
+    - 'ewr.vultrcr.com/slurm/slik:{{ .Tag }}-arm64'
 
   - name_template: 'ewr.vultrcr.com/slurm/slurmabler:latest'
     image_templates:

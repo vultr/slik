@@ -2,20 +2,20 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   labels:
-    app: slinkee-operator
+    app: slik-operator
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-  name: slinkee-operator
+  name: slik-operator
   namespace: {{ .Release.Namespace }}
 data:
   config.yaml: |-
     ---
     logging:
-      debug: {{ .Values.slinkee.logging.debug }}
-      path: {{ .Values.slinkee.logging.path }}
-      encoding: {{ .Values.slinkee.logging.encoding }}
+      debug: {{ .Values.slik.logging.debug }}
+      path: {{ .Values.slik.logging.path }}
+      encoding: {{ .Values.slik.logging.encoding }}
     probes_api:
-      listen: {{ .Values.slinkee.probes_api.listen }}
-      port: {{ .Values.slinkee.probes_api.port }}
+      listen: {{ .Values.slik.probes_api.listen }}
+      port: {{ .Values.slik.probes_api.port }}
     slurm:
       slurmabler:
         image: {{ .Values.slurm.slurmabler.image }}

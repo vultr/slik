@@ -7,7 +7,7 @@ import (
 	"html/template"
 	"strings"
 
-	v1s "github.com/vultr/slinkee/pkg/api/types/v1"
+	v1s "github.com/vultr/slik/pkg/api/types/v1"
 
 	"go.uber.org/zap"
 	v1 "k8s.io/api/core/v1"
@@ -17,18 +17,18 @@ import (
 
 // SlurmdbConf slurmdb conf
 type SlurmdbConf struct {
-	SlinkeeName string
+	SlikName string
 
 	User string
 	Pass string
 }
 
 // NewSlurmdbdConf bilds SlurmdbConf for templating out slurmdb.conf
-func NewSlurmdbdConf(client kubernetes.Interface, wl *v1s.Slinkee) (*SlurmdbConf, error) {
+func NewSlurmdbdConf(client kubernetes.Interface, wl *v1s.Slik) (*SlurmdbConf, error) {
 	log := zap.L().Sugar()
 
 	var conf SlurmdbConf
-	conf.SlinkeeName = wl.Name
+	conf.SlikName = wl.Name
 	conf.User = "slurm"
 	conf.Pass = "slurm"
 
@@ -38,7 +38,7 @@ func NewSlurmdbdConf(client kubernetes.Interface, wl *v1s.Slinkee) (*SlurmdbConf
 }
 
 // buildSlurmconfConfigMap creates slurmdbd.conf configmap with slurmdbd.conf
-func buildSlurmdbdConfigMap(client kubernetes.Interface, wl *v1s.Slinkee) error {
+func buildSlurmdbdConfigMap(client kubernetes.Interface, wl *v1s.Slik) error {
 	log := zap.L().Sugar()
 
 	cm := client.CoreV1().ConfigMaps(wl.Namespace)
@@ -66,7 +66,7 @@ func buildSlurmdbdConfigMap(client kubernetes.Interface, wl *v1s.Slinkee) error 
 			Name:      name,
 			Namespace: wl.Namespace,
 			Labels: map[string]string{
-				"app.kubernetes.io/managed-by": "slinkee",
+				"app.kubernetes.io/managed-by": "slik",
 			},
 		},
 		Data: map[string]string{

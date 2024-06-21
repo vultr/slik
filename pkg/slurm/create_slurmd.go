@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/vultr/slinkee/cmd/slinkee/config"
-	v1s "github.com/vultr/slinkee/pkg/api/types/v1"
+	"github.com/vultr/slik/cmd/slik/config"
+	v1s "github.com/vultr/slik/pkg/api/types/v1"
 
 	"go.uber.org/zap"
 	appsv1 "k8s.io/api/apps/v1"
@@ -15,7 +15,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
-func buildSlurmdService(client kubernetes.Interface, wl *v1s.Slinkee) error {
+func buildSlurmdService(client kubernetes.Interface, wl *v1s.Slik) error {
 	log := zap.L().Sugar()
 
 	svc := client.CoreV1().Services(wl.Namespace)
@@ -32,7 +32,7 @@ func buildSlurmdService(client kubernetes.Interface, wl *v1s.Slinkee) error {
 				Namespace: wl.Namespace,
 				Labels: map[string]string{
 					"app":                          fmt.Sprintf("%s-slurmd", wl.Name),
-					"app.kubernetes.io/managed-by": "slinkee",
+					"app.kubernetes.io/managed-by": "slik",
 				},
 			},
 			Spec: v1.ServiceSpec{
@@ -65,7 +65,7 @@ func buildSlurmdService(client kubernetes.Interface, wl *v1s.Slinkee) error {
 	return nil
 }
 
-func buildSlurmdDeployments(client kubernetes.Interface, wl *v1s.Slinkee) error {
+func buildSlurmdDeployments(client kubernetes.Interface, wl *v1s.Slik) error {
 	log := zap.L().Sugar()
 
 	nodes, err := GetAllNodes(client)
@@ -97,7 +97,7 @@ func buildSlurmdDeployments(client kubernetes.Interface, wl *v1s.Slinkee) error 
 				Namespace: wl.Namespace,
 				Labels: map[string]string{
 					"app":                          fmt.Sprintf("%s-slurmd", wl.Name),
-					"app.kubernetes.io/managed-by": "slinkee",
+					"app.kubernetes.io/managed-by": "slik",
 					"host":                         nodes.Items[i].Name,
 				},
 			},
@@ -114,7 +114,7 @@ func buildSlurmdDeployments(client kubernetes.Interface, wl *v1s.Slinkee) error 
 						Namespace: wl.Namespace,
 						Labels: map[string]string{
 							"app":                          fmt.Sprintf("%s-slurmd", wl.Name),
-							"app.kubernetes.io/managed-by": "slinkee",
+							"app.kubernetes.io/managed-by": "slik",
 							"host":                         nodes.Items[i].Name,
 						},
 					},
@@ -178,7 +178,7 @@ func buildSlurmdDeployments(client kubernetes.Interface, wl *v1s.Slinkee) error 
 	return nil
 }
 
-func mkSlurmdContainer(wl *v1s.Slinkee) *v1.Container {
+func mkSlurmdContainer(wl *v1s.Slik) *v1.Container {
 	c := v1.Container{
 		Name:  "slurmd",
 		Image: config.GetSlurmSlurmdImage(),

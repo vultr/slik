@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/vultr/slinkee/cmd/slinkee/config"
-	v1s "github.com/vultr/slinkee/pkg/api/types/v1"
+	"github.com/vultr/slik/cmd/slik/config"
+	v1s "github.com/vultr/slik/pkg/api/types/v1"
 
 	"go.uber.org/zap"
 	appsv1 "k8s.io/api/apps/v1"
@@ -14,7 +14,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
-func buildToolboxDeployment(client kubernetes.Interface, wl *v1s.Slinkee) error {
+func buildToolboxDeployment(client kubernetes.Interface, wl *v1s.Slik) error {
 	log := zap.L().Sugar()
 
 	ds := client.AppsV1().Deployments(wl.Namespace)
@@ -40,7 +40,7 @@ func buildToolboxDeployment(client kubernetes.Interface, wl *v1s.Slinkee) error 
 			Namespace: wl.Namespace,
 			Labels: map[string]string{
 				"app":                          "slurm-toolbox",
-				"app.kubernetes.io/managed-by": "slinkee",
+				"app.kubernetes.io/managed-by": "slik",
 			},
 		},
 		Spec: appsv1.DeploymentSpec{
@@ -55,7 +55,7 @@ func buildToolboxDeployment(client kubernetes.Interface, wl *v1s.Slinkee) error 
 					Namespace: wl.Namespace,
 					Labels: map[string]string{
 						"app":                          "slurm-toolbox",
-						"app.kubernetes.io/managed-by": "slinkee",
+						"app.kubernetes.io/managed-by": "slik",
 					},
 				},
 				Spec: v1.PodSpec{
@@ -113,7 +113,7 @@ func buildToolboxDeployment(client kubernetes.Interface, wl *v1s.Slinkee) error 
 	return nil
 }
 
-func mkSlurmToolboxContainer(wl *v1s.Slinkee) *v1.Container {
+func mkSlurmToolboxContainer(wl *v1s.Slik) *v1.Container {
 	c := v1.Container{
 		Name:  "slurm-toolbox",
 		Image: config.GetSlurmSlurmToolboxImage(),

@@ -1,6 +1,6 @@
-slinkee:
-  repository: ewr.vultrcr.com/slurm/slinkee
-  tag: v0.0.1
+slik:
+  repository: ewr.vultrcr.com/slurm/slik
+  tag: v0.0.2
   resources:
     requests:
       memory: "1Gi"
@@ -16,19 +16,19 @@ slinkee:
 
 slurm:
   slurmabler:
-    image: "ewr.vultrcr.com/slurm/slurmabler:v0.0.1"
-    service_account: "slinkee"
+    image: "ewr.vultrcr.com/slurm/slurmabler:v0.0.2"
+    service_account: "slik"
   munged:
-    image: "ewr.vultrcr.com/slurm/munged:v0.0.1"
+    image: "ewr.vultrcr.com/slurm/munged:v0.0.2"
   slurmctld:
-    image: "ewr.vultrcr.com/slurm/slurmctld:v0.0.1"
+    image: "ewr.vultrcr.com/slurm/slurmctld:v0.0.2"
   slurmd:
-    image: "ewr.vultrcr.com/slurm/slurmd:v0.0.1"
+    image: "ewr.vultrcr.com/slurm/slurmd:v0.0.2"
   slurm_toolbox:
-    image: "ewr.vultrcr.com/slurm/toolbox:v0.0.1"
+    image: "ewr.vultrcr.com/slurm/toolbox:v0.0.2"
   mariadb:
     image: "mariadb:11.4.2-noble"
   slurmdbd:
-    image: "ewr.vultrcr.com/slurm/slurmdbd:v0.0.1"
+    image: "ewr.vultrcr.com/slurm/slurmdbd:v0.0.2"
   slurmrestd:
-    image: "ewr.vultrcr.com/slurm/slurmrestd:v0.0.1"
+    image: "ewr.vultrcr.com/slurm/slurmrestd:v0.0.2"

@@ -1,14 +1,14 @@
 package slurm
 
 import (
-	v1s "github.com/vultr/slinkee/pkg/api/types/v1"
+	v1s "github.com/vultr/slik/pkg/api/types/v1"
 
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes"
 )
 
 // CreateSlurm launches a slurm cluster on the k8s cluster
-func CreateSlurm(client kubernetes.Interface, wl *v1s.Slinkee) error {
+func CreateSlurm(client kubernetes.Interface, wl *v1s.Slik) error {
 	// namespace
 	if !NamespaceExists(client, wl.Namespace) {
 		if err := buildNamespace(client, wl); err != nil {
@@ -99,6 +99,6 @@ func CreateSlurm(client kubernetes.Interface, wl *v1s.Slinkee) error {
 	return nil
 }
 
-func mkAffinity(wl *v1s.Slinkee) (*v1.Affinity, error) {
+func mkAffinity(wl *v1s.Slik) (*v1.Affinity, error) {
 	return nil, nil
 }

@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	v1s "github.com/vultr/slinkee/pkg/api/types/v1"
+	v1s "github.com/vultr/slik/pkg/api/types/v1"
 
 	"k8s.io/client-go/kubernetes/fake"
 )
@@ -12,14 +12,14 @@ import (
 type Fixture5 struct {
 	name string
 
-	wl *v1s.Slinkee
+	wl *v1s.Slik
 
 	result      error
 	description string
 }
 
 func TestCreateSlurm(t *testing.T) {
-	os.Args = append(os.Args, "-config=../../cmd/slinkee/config.yaml")
+	os.Args = append(os.Args, "-config=../../cmd/slik/config.yaml")
 
 	client := fake.NewSimpleClientset()
 
@@ -27,7 +27,7 @@ func TestCreateSlurm(t *testing.T) {
 		{
 			name: "wl1",
 
-			wl: &v1s.Slinkee{},
+			wl: &v1s.Slik{},
 
 			result:      nil,
 			description: "happy path for deployment",
@@ -35,7 +35,7 @@ func TestCreateSlurm(t *testing.T) {
 		{
 			name: "wl2",
 
-			wl: &v1s.Slinkee{},
+			wl: &v1s.Slik{},
 
 			result:      nil,
 			description: "happy path for job",
@@ -43,7 +43,7 @@ func TestCreateSlurm(t *testing.T) {
 		{
 			name: "wl3",
 
-			wl: &v1s.Slinkee{},
+			wl: &v1s.Slik{},
 
 			result:      nil,
 			description: "happy path for cron job",
@@ -51,7 +51,7 @@ func TestCreateSlurm(t *testing.T) {
 		{
 			name: "wl4",
 
-			wl: &v1s.Slinkee{},
+			wl: &v1s.Slik{},
 
 			result:      nil,
 			description: "happy path for pod",
@@ -59,7 +59,7 @@ func TestCreateSlurm(t *testing.T) {
 		{
 			name: "wl1",
 
-			wl: &v1s.Slinkee{},
+			wl: &v1s.Slik{},
 
 			result:      nil,
 			description: "happy path for job with gpu",
@@ -67,7 +67,7 @@ func TestCreateSlurm(t *testing.T) {
 		{
 			name: "wl1",
 
-			wl: &v1s.Slinkee{},
+			wl: &v1s.Slik{},
 
 			result:      nil,
 			description: "happy path for command and args",
@@ -75,7 +75,7 @@ func TestCreateSlurm(t *testing.T) {
 		{
 			name: "wl1",
 
-			wl: &v1s.Slinkee{},
+			wl: &v1s.Slik{},
 
 			result:      nil,
 			description: "quantity failure 1",
