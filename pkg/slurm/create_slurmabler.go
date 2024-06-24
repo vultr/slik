@@ -87,10 +87,15 @@ func buildSlurmablerDaemonSet(client kubernetes.Interface, wl *v1s.Slik) error {
 		var lablesSet int = 0
 
 		for i := range nodes.Items {
+			if len(nodes.Items[i].Spec.Taints) > 0 {
+				lablesSet++
+
+				continue
+			}
+
 			labels := nodes.Items[i].GetLabels()
 
 			_, ok := labels["slik.vultr.com/real_memory"]
-
 			if ok {
 				lablesSet++
 			}
