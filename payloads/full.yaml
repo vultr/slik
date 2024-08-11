@@ -1,5 +1,5 @@
 ---
-apiVersion: "hpc.vultr.com/v1"
+apiVersion: "ahmedtremo.com/v1"
 kind: Slik
 metadata:
   name: full
@@ -9,4 +9,4 @@ spec:
   slurmrestd: true
   mariadb:
     storage_size: 50G
-    storage_class: vultr-block-storage-hdd-retain
+    storage_class: default

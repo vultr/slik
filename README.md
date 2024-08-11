@@ -19,7 +19,7 @@ You then interact with the slurm cluster through the toolbox pod: `kubectl exec 
 Sample yaml:
 
 ```yaml
-apiVersion: "hpc.vultr.com/v1"
+apiVersion: "ahmedtremo.com/v1"
 kind: Slik
 metadata:
   name: full
@@ -28,8 +28,8 @@ spec:
   slurmdbd: true
   slurmrestd: true
   mariadb:
-    storage_size: 50G
-    storage_class: vultr-block-storage-hdd-retain
+    storage_size: 5G
+    storage_class: default
 ```
 
 Update operations are not currently supported, you should rebuild the cluster instead. Delete the slurm deployment, then re-create it. If you use a PVC that is retained you should not lose any data.

@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	v1s "github.com/vultr/slik/pkg/api/types/v1"
-	"github.com/vultr/slik/pkg/connectors"
-	"github.com/vultr/slik/pkg/slurm"
+	v1s "github.com/AhmedTremo/slik/pkg/api/types/v1"
+	"github.com/AhmedTremo/slik/pkg/connectors"
+	"github.com/AhmedTremo/slik/pkg/slurm"
 
 	"go.uber.org/zap"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -122,7 +122,7 @@ func loop() error {
 				}
 
 				s2.ObjectMeta.Finalizers = []string{
-					"sliks.hpc.vultr.com",
+					"sliks.hpc.AhmedTremo.com",
 				}
 
 				if _, err := slurmcs.Slik(context.TODO()).Update(s2, v1.UpdateOptions{}); err != nil {

@@ -1,4 +1,4 @@
-module github.com/vultr/slik
+module github.com/AhmedTremo/slik
 
 go 1.22.0
 

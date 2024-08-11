@@ -8,7 +8,7 @@ jobs:
     name: Pull Request Notification
     steps:
       - run: |
-          echo "{\"text\":\"slik : PR https://github.com/vultr/slik/pull/${{ github.event.number }} \"}" > mattermost.json
+          echo "{\"text\":\"slik : PR https://github.com/ahmedtremo/slik/pull/${{ github.event.number }} \"}" > mattermost.json
       - uses: mattermost/action-mattermost-notify@master
         with:
           MATTERMOST_WEBHOOK_URL: ${{ secrets.MATTERMOST_WEBHOOK_URL }}

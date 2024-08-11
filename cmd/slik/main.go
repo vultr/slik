@@ -5,11 +5,11 @@ import (
 	"context"
 	"time"
 
-	"github.com/vultr/slik/cmd/slik/config"
-	"github.com/vultr/slik/cmd/slik/metrics"
-	"github.com/vultr/slik/pkg/helpers"
-	"github.com/vultr/slik/pkg/probes"
-	"github.com/vultr/slik/pkg/reconciler"
+	"github.com/AhmedTremo/slik/cmd/slik/config"
+	"github.com/AhmedTremo/slik/cmd/slik/metrics"
+	"github.com/AhmedTremo/slik/pkg/helpers"
+	"github.com/AhmedTremo/slik/pkg/probes"
+	"github.com/AhmedTremo/slik/pkg/reconciler"
 
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"

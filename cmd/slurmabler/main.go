@@ -6,10 +6,10 @@ import (
 	"os/exec"
 	"time"
 
-	"github.com/vultr/slik/cmd/slurmabler/config"
-	"github.com/vultr/slik/pkg/connectors"
-	"github.com/vultr/slik/pkg/labeler"
-	"github.com/vultr/slik/pkg/slurm"
+	"github.com/AhmedTremo/slik/cmd/slurmabler/config"
+	"github.com/AhmedTremo/slik/pkg/connectors"
+	"github.com/AhmedTremo/slik/pkg/labeler"
+	"github.com/AhmedTremo/slik/pkg/slurm"
 
 	"go.uber.org/zap"
 )
@@ -61,13 +61,13 @@ func main() { //nolint
 	}
 
 	labels := node.GetLabels()
-	labels["slik.vultr.com/nodename"] = labeler.NodeName
-	labels["slik.vultr.com/cpus"] = fmt.Sprintf("%d", labeler.CPUs)
-	labels["slik.vultr.com/boards"] = fmt.Sprintf("%d", labeler.Boards)
-	labels["slik.vultr.com/sockets_per_board"] = fmt.Sprintf("%d", labeler.SocketsPerBoard)
-	labels["slik.vultr.com/cores_per_socket"] = fmt.Sprintf("%d", labeler.CoresPerSocket)
-	labels["slik.vultr.com/threads_per_core"] = fmt.Sprintf("%d", labeler.ThreadsPerCore)
-	labels["slik.vultr.com/real_memory"] = fmt.Sprintf("%d", labeler.RealMemory)
+	labels["slik.AhmedTremo.com/nodename"] = labeler.NodeName
+	labels["slik.AhmedTremo.com/cpus"] = fmt.Sprintf("%d", labeler.CPUs)
+	labels["slik.AhmedTremo.com/boards"] = fmt.Sprintf("%d", labeler.Boards)
+	labels["slik.AhmedTremo.com/sockets_per_board"] = fmt.Sprintf("%d", labeler.SocketsPerBoard)
+	labels["slik.AhmedTremo.com/cores_per_socket"] = fmt.Sprintf("%d", labeler.CoresPerSocket)
+	labels["slik.AhmedTremo.com/threads_per_core"] = fmt.Sprintf("%d", labeler.ThreadsPerCore)
+	labels["slik.AhmedTremo.com/real_memory"] = fmt.Sprintf("%d", labeler.RealMemory)
 
 	node.Labels = labels
 

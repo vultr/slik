@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	v1s "github.com/vultr/slik/pkg/api/types/v1"
+	v1s "github.com/AhmedTremo/slik/pkg/api/types/v1"
 
 	"go.uber.org/zap"
 	v1 "k8s.io/api/core/v1"
@@ -44,17 +44,17 @@ func NewSlurmConf(client kubernetes.Interface, wl *v1s.Slik) (*SlurmConf, error)
 	var conf SlurmConf
 	for i := range nodes.Items {
 		labels := nodes.Items[i].GetLabels()
-		cpusS, ok := labels["slik.vultr.com/cpus"]
+		cpusS, ok := labels["slik.AhmedTremo.com/cpus"]
 		if !ok {
 			continue
 		}
 
-		memoryS, ok := labels["slik.vultr.com/real_memory"]
+		memoryS, ok := labels["slik.AhmedTremo.com/real_memory"]
 		if !ok {
 			continue
 		}
 
-		threadsPerCoreS, ok := labels["slik.vultr.com/threads_per_core"]
+		threadsPerCoreS, ok := labels["slik.AhmedTremo.com/threads_per_core"]
 		if !ok {
 			continue
 		}

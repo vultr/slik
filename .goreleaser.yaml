@@ -40,8 +40,8 @@ dockers:
     - "--pull"
     - "--platform=linux/amd64"
     image_templates:
-      - "ewr.vultrcr.com/slurm/slik:latest-amd64"
-      - "ewr.vultrcr.com/slurm/slik:{{ .Tag }}-amd64"
+      - "slurmacr.azurecr.com/slurm/slik:latest-amd64"
+      - "slurmacr.azurecr.com/slurm/slik:{{ .Tag }}-amd64"
     extra_files:
       - "cmd/slik/config.yaml"
     ids:
@@ -54,8 +54,8 @@ dockers:
     - "--pull"
     - "--platform=linux/arm64/v8"
     image_templates:
-      - "ewr.vultrcr.com/slurm/slik:latest-arm64"
-      - "ewr.vultrcr.com/slurm/slik:{{ .Tag }}-arm64"
+      - "slurmacr.azurecr.com/slurm/slik:latest-arm64"
+      - "slurmacr.azurecr.com/slurm/slik:{{ .Tag }}-arm64"
     extra_files:
       - "cmd/slik/config.yaml"
     ids:
@@ -67,8 +67,8 @@ dockers:
     - "--pull"
     - "--platform=linux/amd64"
     image_templates:
-      - "ewr.vultrcr.com/slurm/slurmabler:latest-amd64"
-      - "ewr.vultrcr.com/slurm/slurmabler:{{ .Tag }}-amd64"
+      - "slurmacr.azurecr.com/slurm/slurmabler:latest-amd64"
+      - "slurmacr.azurecr.com/slurm/slurmabler:{{ .Tag }}-amd64"
     ids:
       - slurmabler
 
@@ -79,31 +79,31 @@ dockers:
     - "--pull"
     - "--platform=linux/arm64/v8"
     image_templates:
-      - "ewr.vultrcr.com/slurm/slurmabler:latest-arm64"
-      - "ewr.vultrcr.com/slurm/slurmabler:{{ .Tag }}-arm64"
+      - "slurmacr.azurecr.com/slurm/slurmabler:latest-arm64"
+      - "slurmacr.azurecr.com/slurm/slurmabler:{{ .Tag }}-arm64"
     ids:
       - slurmabler
 
 docker_manifests:
-  - name_template: 'ewr.vultrcr.com/slurm/slik:latest'
+  - name_template: 'slurmacr.azurecr.com/slurm/slik:latest'
     image_templates:
-    - 'ewr.vultrcr.com/slurm/slik:latest-amd64'
-    - 'ewr.vultrcr.com/slurm/slik:latest-arm64'
+    - 'slurmacr.azurecr.com/slurm/slik:latest-amd64'
+    - 'slurmacr.azurecr.com/slurm/slik:latest-arm64'
 
-  - name_template: 'ewr.vultrcr.com/slurm/slik:{{ .Tag }}'
+  - name_template: 'slurmacr.azurecr.com/slurm/slik:{{ .Tag }}'
     image_templates:
-    - 'ewr.vultrcr.com/slurm/slik:{{ .Tag }}-amd64'
-    - 'ewr.vultrcr.com/slurm/slik:{{ .Tag }}-arm64'
+    - 'slurmacr.azurecr.com/slurm/slik:{{ .Tag }}-amd64'
+    - 'slurmacr.azurecr.com/slurm/slik:{{ .Tag }}-arm64'
 
-  - name_template: 'ewr.vultrcr.com/slurm/slurmabler:latest'
+  - name_template: 'slurmacr.azurecr.com/slurm/slurmabler:latest'
     image_templates:
-      - 'ewr.vultrcr.com/slurm/slurmabler:latest-amd64'
-      - 'ewr.vultrcr.com/slurm/slurmabler:latest-arm64'
+      - 'slurmacr.azurecr.com/slurm/slurmabler:latest-amd64'
+      - 'slurmacr.azurecr.com/slurm/slurmabler:latest-arm64'
 
-  - name_template: 'ewr.vultrcr.com/slurm/slurmabler:{{ .Tag }}'
+  - name_template: 'slurmacr.azurecr.com/slurm/slurmabler:{{ .Tag }}'
     image_templates:
-      - 'ewr.vultrcr.com/slurm/slurmabler:{{ .Tag }}-amd64'
-      - 'ewr.vultrcr.com/slurm/slurmabler:{{ .Tag }}-arm64'
+      - 'slurmacr.azurecr.com/slurm/slurmabler:{{ .Tag }}-amd64'
+      - 'slurmacr.azurecr.com/slurm/slurmabler:{{ .Tag }}-arm64'
 
 release:
   draft: false

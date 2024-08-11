@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/vultr/slik/cmd/slik/config"
-	v1s "github.com/vultr/slik/pkg/api/types/v1"
+	"github.com/AhmedTremo/slik/cmd/slik/config"
+	v1s "github.com/AhmedTremo/slik/pkg/api/types/v1"
 
 	"go.uber.org/zap"
 	appsv1 "k8s.io/api/apps/v1"
@@ -141,7 +141,7 @@ func mkSlurmctlContainer(wl *v1s.Slik) *v1.Container {
 
 	c.Env = []v1.EnvVar{
 		{
-			Name:  "X_VULTR_SLURM_ID",
+			Name:  "X_AhmedTremo_SLURM_ID",
 			Value: wl.Name,
 		},
 	}

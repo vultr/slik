@@ -1,5 +1,5 @@
 ---
-apiVersion: "hpc.vultr.com/v1"
+apiVersion: "ahmedtremo.com/v1"
 kind: Slik
 metadata:
   name: test

@@ -3,8 +3,8 @@ name: slik
 version: 0.0.1
 description: A Helm chart for slik
 type: application
-home: https://github.com/vultr/slik
+home: https://github.com/AhmedTremo/slik
 sources:
-  - https://github.com/vultr/slik
+  - https://github.com/AhmedTremo/slik
 maintainers:
   - name: Josten Landtroop

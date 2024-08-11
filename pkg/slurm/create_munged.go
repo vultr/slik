@@ -5,9 +5,9 @@ import (
 	b64 "encoding/base64"
 	"fmt"
 
-	"github.com/vultr/slik/cmd/slik/config"
-	v1s "github.com/vultr/slik/pkg/api/types/v1"
-	"github.com/vultr/slik/pkg/munge"
+	"github.com/AhmedTremo/slik/cmd/slik/config"
+	v1s "github.com/AhmedTremo/slik/pkg/api/types/v1"
+	"github.com/AhmedTremo/slik/pkg/munge"
 
 	"go.uber.org/zap"
 	v1 "k8s.io/api/core/v1"
@@ -77,7 +77,7 @@ func mkMungeContainer(wl *v1s.Slik) *v1.Container {
 
 	c.Env = []v1.EnvVar{
 		{
-			Name:  "X_VULTR_SLURM_ID",
+			Name:  "X_AhmedTremo_SLURM_ID",
 			Value: wl.Name,
 		},
 	}

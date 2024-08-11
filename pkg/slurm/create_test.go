@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	v1s "github.com/vultr/slik/pkg/api/types/v1"
+	v1s "github.com/AhmedTremo/slik/pkg/api/types/v1"
 
 	"k8s.io/client-go/kubernetes/fake"
 )

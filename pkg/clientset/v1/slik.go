@@ -3,7 +3,7 @@ package v1
 import (
 	"context"
 
-	v1 "github.com/vultr/slik/pkg/api/types/v1"
+	v1 "github.com/AhmedTremo/slik/pkg/api/types/v1"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/watch"

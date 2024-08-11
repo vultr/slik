@@ -62,7 +62,7 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
-          docker login https://ewr.vultrcr.com/slurm -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
+          docker login https://slurmacr.azurecr.com/slurm -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
       
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
@@ -96,7 +96,7 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
-          docker login https://ewr.vultrcr.com/slurm -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
+          docker login https://slurmacr.azurecr.com/slurm -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
         
       - name: Build and push
         uses: docker/build-push-action@v5
@@ -105,8 +105,8 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
-            ewr.vultrcr.com/slurm/munged:${{ needs.create-tag.outputs.new_tag }}
-            ewr.vultrcr.com/slurm/munged:latest
+            slurmacr.azurecr.com/slurm/munged:${{ needs.create-tag.outputs.new_tag }}
+            slurmacr.azurecr.com/slurm/munged:latest
 
   slurmctld:
     runs-on: ubuntu-latest
@@ -124,7 +124,7 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
-          docker login https://ewr.vultrcr.com/slurm -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
+          docker login https://slurmacr.azurecr.com/slurm -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
         
       - name: Build and push
         uses: docker/build-push-action@v5
@@ -133,8 +133,8 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
-            ewr.vultrcr.com/slurm/slurmctld:${{ needs.create-tag.outputs.new_tag }}
-            ewr.vultrcr.com/slurm/slurmctld:latest
+            slurmacr.azurecr.com/slurm/slurmctld:${{ needs.create-tag.outputs.new_tag }}
+            slurmacr.azurecr.com/slurm/slurmctld:latest
 
   slurmd:
     runs-on: ubuntu-latest
@@ -152,7 +152,7 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
-          docker login https://ewr.vultrcr.com/slurm -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
+          docker login https://slurmacr.azurecr.com/slurm -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
         
       - name: Build and push
         uses: docker/build-push-action@v5
@@ -161,8 +161,8 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
-            ewr.vultrcr.com/slurm/slurmd:${{ needs.create-tag.outputs.new_tag }}
-            ewr.vultrcr.com/slurm/slurmd:latest
+            slurmacr.azurecr.com/slurm/slurmd:${{ needs.create-tag.outputs.new_tag }}
+            slurmacr.azurecr.com/slurm/slurmd:latest
 
   toolbox:
     runs-on: ubuntu-latest
@@ -180,7 +180,7 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
-          docker login https://ewr.vultrcr.com/slurm -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
+          docker login https://slurmacr.azurecr.com/slurm -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
         
       - name: Build and push
         uses: docker/build-push-action@v5
@@ -189,8 +189,8 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
-            ewr.vultrcr.com/slurm/toolbox:${{ needs.create-tag.outputs.new_tag }}
-            ewr.vultrcr.com/slurm/toolbox:latest
+            slurmacr.azurecr.com/slurm/toolbox:${{ needs.create-tag.outputs.new_tag }}
+            slurmacr.azurecr.com/slurm/toolbox:latest
 
   slurmdbd:
     runs-on: ubuntu-latest
@@ -208,7 +208,7 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
-          docker login https://ewr.vultrcr.com/slurm -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
+          docker login https://slurmacr.azurecr.com/slurm -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
         
       - name: Build and push
         uses: docker/build-push-action@v5
@@ -217,8 +217,8 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
-            ewr.vultrcr.com/slurm/slurmdbd:${{ needs.create-tag.outputs.new_tag }}
-            ewr.vultrcr.com/slurm/slurmdbd:latest
+            slurmacr.azurecr.com/slurm/slurmdbd:${{ needs.create-tag.outputs.new_tag }}
+            slurmacr.azurecr.com/slurm/slurmdbd:latest
 
   slurmrestd:
     runs-on: ubuntu-latest
@@ -236,7 +236,7 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
-          docker login https://ewr.vultrcr.com/slurm -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
+          docker login https://slurmacr.azurecr.com/slurm -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
         
       - name: Build and push
         uses: docker/build-push-action@v5
@@ -245,8 +245,8 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
-            ewr.vultrcr.com/slurm/slurmrestd:${{ needs.create-tag.outputs.new_tag }}
-            ewr.vultrcr.com/slurm/slurmrestd:latest
+            slurmacr.azurecr.com/slurm/slurmrestd:${{ needs.create-tag.outputs.new_tag }}
+            slurmacr.azurecr.com/slurm/slurmrestd:latest
 
   release:
     runs-on: ubuntu-latest
