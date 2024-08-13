@@ -5,6 +5,9 @@ An operator to deploy slurm in kubernetes.
 
 Note: This project has been renamed from slinkee to slik; this was due to a name conflict.
 
+## Requirements
+- Kubernetes v1.28+ with `Sidecarecontainers` feature gate enabled( Enabled by default in v1.29 ) 
+
 ## Usage
 Everything is public, including the slurm images. You do not need any auth or secret sauce to use this. If you intend to use in a different cloud platform you may need to make tweaks to the mariadb statefulset. If you intend to deploy slurm on arm you'll need to build arm images.
 
