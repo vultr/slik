@@ -3,7 +3,7 @@
 ## Overview
 An operator to deploy slurm in kubernetes.
 
-Note: This project has been renamed from slinkee to slik; this was due to a name conflict.
+Note: This project has been archived in favor of the [Slinky](https://github.com/SlinkyProject) project. 
 
 ## Requirements
 - Kubernetes v1.28+ with `Sidecarcontainers` feature gate enabled( Enabled by default in v1.29 ) 
