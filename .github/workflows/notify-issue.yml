@@ -9,11 +9,16 @@ jobs:
     runs-on: ubuntu-latest
     name: New Issue Notification
     steps:
-      - run: |
-          echo "{\"text\":\"slik : New Issue https://github.com/vultr/slik/issues/${{ github.event.issue.number }} \"}" > mattermost.json
-      - uses: mattermost/action-mattermost-notify@2.0.0
-        with:
+      - name: Send Mattermost notification
+        env:
           MATTERMOST_WEBHOOK_URL: ${{ secrets.MATTERMOST_WEBHOOK_URL }}
-          MATTERMOST_USERNAME: ${{ secrets.MATTERMOST_USERNAME}}
-          MATTERMOST_ICON_URL: ${{ secrets.MATTERMOST_ICON }}
-          PAYLOAD_FILENAME: mattermost.json
+        run: |
+          if [ -z "${MATTERMOST_WEBHOOK_URL}" ]; then
+            echo "MATTERMOST_WEBHOOK_URL is not configured; skipping notification."
+            exit 0
+          fi
+
+          curl --fail --silent --show-error --output /dev/null \
+            -H 'Content-Type: application/json' \
+            -d '{"text":"slik : New Issue https://github.com/vultr/slik/issues/${{ github.event.issue.number }} "}' \
+            "${MATTERMOST_WEBHOOK_URL}"
