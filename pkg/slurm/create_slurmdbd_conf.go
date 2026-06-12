@@ -76,9 +76,9 @@ func buildSlurmdbdConfigMap(client kubernetes.Interface, wl *v1s.Slik) error {
 
 	log.Infof("configmap (slurmdbd.conf): %+v", cmSpec)
 
-	_, err2 := cm.Create(context.TODO(), cmSpec, metav1.CreateOptions{})
-	if err2 != nil {
-		return err2
+	_, err = cm.Create(context.TODO(), cmSpec, metav1.CreateOptions{})
+	if err != nil {
+		return ignoreAlreadyExists(err)
 	}
 
 	WaitForConfigMap(client, name, wl.Namespace)

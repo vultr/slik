@@ -104,9 +104,9 @@ func buildSlurmrestdDeployment(client kubernetes.Interface, wl *v1s.Slik) error 
 
 	log.Infof("slurmrestd deployment: %+v", slurmrestdDep)
 
-	_, err2 := ds.Create(context.TODO(), slurmrestdDep, metav1.CreateOptions{})
-	if err2 != nil {
-		return err2
+	_, err = ds.Create(context.TODO(), slurmrestdDep, metav1.CreateOptions{})
+	if err != nil {
+		return ignoreAlreadyExists(err)
 	}
 
 	log.Infof("slurmrestd deployments %s created", wl.Name)
@@ -146,9 +146,9 @@ func buildSlurmrestdService(client kubernetes.Interface, wl *v1s.Slik) error {
 
 	log.Infof("slurmrestd service: %+v", svcSpec)
 
-	_, err2 := svc.Create(context.TODO(), svcSpec, metav1.CreateOptions{})
-	if err2 != nil {
-		return err2
+	_, err := svc.Create(context.TODO(), svcSpec, metav1.CreateOptions{})
+	if err != nil {
+		return ignoreAlreadyExists(err)
 	}
 
 	log.Infof("slurmrestd service %s created", wl.Name)

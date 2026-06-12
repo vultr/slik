@@ -20,15 +20,15 @@ func buildSlurmdService(client kubernetes.Interface, wl *v1s.Slik) error {
 
 	svc := client.CoreV1().Services(wl.Namespace)
 
-	nodes, err := GetAllNodes(client)
+	nodes, err := slurmNodes(client)
 	if err != nil {
 		return err
 	}
 
-	for i := range nodes.Items {
+	for i := range nodes {
 		svcSpec := &v1.Service{
 			ObjectMeta: metav1.ObjectMeta{
-				Name:      fmt.Sprintf("%s-%s", wl.Name, nodes.Items[i].Name),
+				Name:      fmt.Sprintf("%s-%s", wl.Name, nodes[i].Name),
 				Namespace: wl.Namespace,
 				Labels: map[string]string{
 					"app":                          fmt.Sprintf("%s-slurmd", wl.Name),
@@ -47,16 +47,16 @@ func buildSlurmdService(client kubernetes.Interface, wl *v1s.Slik) error {
 				},
 				Selector: map[string]string{
 					"app":  fmt.Sprintf("%s-slurmd", wl.Name),
-					"host": nodes.Items[i].Name,
+					"host": nodes[i].Name,
 				},
 			},
 		}
 
 		log.Infof("slurmd service: %+v", svcSpec)
 
-		_, err2 := svc.Create(context.TODO(), svcSpec, metav1.CreateOptions{})
-		if err2 != nil {
-			return err2
+		_, err := svc.Create(context.TODO(), svcSpec, metav1.CreateOptions{})
+		if err != nil {
+			return ignoreAlreadyExists(err)
 		}
 
 		log.Infof("slurmd service %s created", wl.Name)
@@ -68,12 +68,12 @@ func buildSlurmdService(client kubernetes.Interface, wl *v1s.Slik) error {
 func buildSlurmdDeployments(client kubernetes.Interface, wl *v1s.Slik) error {
 	log := zap.L().Sugar()
 
-	nodes, err := GetAllNodes(client)
+	nodes, err := slurmNodes(client)
 	if err != nil {
 		return err
 	}
 
-	for i := range nodes.Items {
+	for i := range nodes {
 		ds := client.AppsV1().Deployments(wl.Namespace)
 
 		aff, err := mkAffinity(wl)
@@ -93,19 +93,19 @@ func buildSlurmdDeployments(client kubernetes.Interface, wl *v1s.Slik) error {
 
 		slurmDepSpec := &appsv1.Deployment{
 			ObjectMeta: metav1.ObjectMeta{
-				Name:      fmt.Sprintf("%s-%s", wl.Name, nodes.Items[i].Name),
+				Name:      fmt.Sprintf("%s-%s", wl.Name, nodes[i].Name),
 				Namespace: wl.Namespace,
 				Labels: map[string]string{
 					"app":                          fmt.Sprintf("%s-slurmd", wl.Name),
 					"app.kubernetes.io/managed-by": "slik",
-					"host":                         nodes.Items[i].Name,
+					"host":                         nodes[i].Name,
 				},
 			},
 			Spec: appsv1.DeploymentSpec{
 				Selector: &metav1.LabelSelector{
 					MatchLabels: map[string]string{
 						"app":  fmt.Sprintf("%s-slurmd", wl.Name),
-						"host": nodes.Items[i].Name,
+						"host": nodes[i].Name,
 					},
 				},
 				Template: v1.PodTemplateSpec{
@@ -115,11 +115,11 @@ func buildSlurmdDeployments(client kubernetes.Interface, wl *v1s.Slik) error {
 						Labels: map[string]string{
 							"app":                          fmt.Sprintf("%s-slurmd", wl.Name),
 							"app.kubernetes.io/managed-by": "slik",
-							"host":                         nodes.Items[i].Name,
+							"host":                         nodes[i].Name,
 						},
 					},
 					Spec: v1.PodSpec{
-						Hostname: fmt.Sprintf("%s-%s", wl.Name, nodes.Items[i].Name),
+						Hostname: fmt.Sprintf("%s-%s", wl.Name, nodes[i].Name),
 						Affinity: aff,
 						InitContainers: []v1.Container{
 							*mungeCont,
@@ -158,7 +158,7 @@ func buildSlurmdDeployments(client kubernetes.Interface, wl *v1s.Slik) error {
 							},
 						},
 						NodeSelector: map[string]string{
-							"kubernetes.io/hostname": nodes.Items[i].Name,
+							"kubernetes.io/hostname": nodes[i].Name,
 						},
 					},
 				},
@@ -167,9 +167,9 @@ func buildSlurmdDeployments(client kubernetes.Interface, wl *v1s.Slik) error {
 
 		log.Infof("slurmd deployment: %+v", slurmDepSpec)
 
-		_, err2 := ds.Create(context.TODO(), slurmDepSpec, metav1.CreateOptions{})
-		if err2 != nil {
-			return err2
+		_, err = ds.Create(context.TODO(), slurmDepSpec, metav1.CreateOptions{})
+		if err != nil {
+			return ignoreAlreadyExists(err)
 		}
 	}
 

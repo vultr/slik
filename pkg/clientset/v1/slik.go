@@ -71,9 +71,10 @@ func (c *slikClient) Update(slik *v1.Slik, options metav1.UpdateOptions) (*v1.Sl
 	result := v1.Slik{}
 
 	err := c.restClient.Put().
-		Namespace(slik.Spec.Namespace).
+		Namespace(slikNamespace(slik)).
 		Resource("sliks").
 		Name(slik.Name).
+		VersionedParams(&options, scheme.ParameterCodec).
 		Body(slik).
 		Do(c.ctx).
 		Into(&result)
@@ -85,10 +86,11 @@ func (c *slikClient) UpdateStatus(slik *v1.Slik, options metav1.UpdateOptions) (
 	result := v1.Slik{}
 
 	err := c.restClient.Put().
-		Namespace(slik.Spec.Namespace).
+		Namespace(slikNamespace(slik)).
 		Resource("sliks").
 		Name(slik.Name).
 		SubResource("status").
+		VersionedParams(&options, scheme.ParameterCodec).
 		Body(slik).
 		Do(c.ctx).
 		Into(&result)
@@ -98,14 +100,23 @@ func (c *slikClient) UpdateStatus(slik *v1.Slik, options metav1.UpdateOptions) (
 
 func (c *slikClient) Delete(name string, slik *v1.Slik, options metav1.DeleteOptions) error {
 	err := c.restClient.Delete().
-		Namespace(slik.Spec.Namespace).
+		Namespace(slikNamespace(slik)).
 		Resource("sliks").
 		Name(name).
+		VersionedParams(&options, scheme.ParameterCodec).
 		Body(&options).
 		Do(c.ctx).
 		Error()
 
 	return err
+}
+
+func slikNamespace(slik *v1.Slik) string {
+	if slik.Namespace != "" {
+		return slik.Namespace
+	}
+
+	return slik.Spec.Namespace
 }
 
 func (c *slikClient) Watch(opts metav1.ListOptions) (watch.Interface, error) {

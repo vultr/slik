@@ -37,9 +37,9 @@ func buildMariaDBConfigMap(client kubernetes.Interface, wl *v1s.Slik) error {
 
 	log.Infof("configmap (mariadb-config): %+v", cmCfgSpec)
 
-	_, err2 := cm.Create(context.TODO(), cmCfgSpec, metav1.CreateOptions{})
-	if err2 != nil {
-		return err2
+	_, err := cm.Create(context.TODO(), cmCfgSpec, metav1.CreateOptions{})
+	if err != nil {
+		return ignoreAlreadyExists(err)
 	}
 
 	WaitForConfigMap(client, fmt.Sprintf("%s-mariadb-config", wl.Name), wl.Namespace)
@@ -59,9 +59,9 @@ func buildMariaDBConfigMap(client kubernetes.Interface, wl *v1s.Slik) error {
 
 	log.Infof("configmap (mariadb-init): %+v", cmInitSpec)
 
-	_, err3 := cm.Create(context.TODO(), cmInitSpec, metav1.CreateOptions{})
-	if err3 != nil {
-		return err3
+	_, err = cm.Create(context.TODO(), cmInitSpec, metav1.CreateOptions{})
+	if err != nil {
+		return ignoreAlreadyExists(err)
 	}
 
 	WaitForConfigMap(client, fmt.Sprintf("%s-mariadb-init", wl.Name), wl.Namespace)
@@ -165,9 +165,9 @@ func buildMariaDBStatefulSet(client kubernetes.Interface, wl *v1s.Slik) error {
 
 	log.Infof("mariadb statefulset: %+v", mariadbSTS)
 
-	_, err2 := msts.Create(context.TODO(), mariadbSTS, metav1.CreateOptions{})
-	if err2 != nil {
-		return err2
+	_, err = msts.Create(context.TODO(), mariadbSTS, metav1.CreateOptions{})
+	if err != nil {
+		return ignoreAlreadyExists(err)
 	}
 
 	log.Infof("mariadb statefulset %s created", wl.Name)
@@ -261,9 +261,9 @@ func buildMariaDBService(client kubernetes.Interface, wl *v1s.Slik) error {
 
 	log.Infof("mariadb service: %+v", svcSpec)
 
-	_, err2 := svc.Create(context.TODO(), svcSpec, metav1.CreateOptions{})
-	if err2 != nil {
-		return err2
+	_, err := svc.Create(context.TODO(), svcSpec, metav1.CreateOptions{})
+	if err != nil {
+		return ignoreAlreadyExists(err)
 	}
 
 	log.Infof("mariadb service %s created", wl.Name)

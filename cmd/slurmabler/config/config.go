@@ -2,6 +2,7 @@
 package config
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"net"
@@ -127,7 +128,7 @@ func mainIP() (string, error) {
 
 	localAddr, ok := conn.LocalAddr().(*net.UDPAddr)
 	if !ok {
-		return "", err
+		return "", errors.New("local address is not UDP")
 	}
 
 	return localAddr.IP.String(), nil

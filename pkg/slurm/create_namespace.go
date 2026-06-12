@@ -28,9 +28,9 @@ func buildNamespace(client kubernetes.Interface, wl *v1s.Slik) error {
 
 	log.Infof("namespace: %+v", nsSpec)
 
-	_, err2 := ns.Create(context.TODO(), nsSpec, metav1.CreateOptions{})
-	if err2 != nil {
-		return err2
+	_, err := ns.Create(context.TODO(), nsSpec, metav1.CreateOptions{})
+	if err != nil {
+		return ignoreAlreadyExists(err)
 	}
 
 	return nil
