@@ -5,22 +5,23 @@ on:
   pull_request:
 
 jobs:
-  Golangci-Lint:
+  go:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+
       - name: Setup Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v5
         with:
-          go-version: 1.22
+          go-version-file: go.mod
+          cache: true
 
-      - name: Install dependencies
-        run: |
-          go version
-          go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.55.1
+      - name: Check formatting
+        run: test -z "$(gofmt -l .)"
 
-      - name: Run golangci-lint
-        run: |
-          golangci-lint run cmd/...
-          golangci-lint run spec/...
+      - name: Run go vet
+        run: go vet ./...
+
+      - name: Run tests
+        run: go test ./...
