@@ -36,28 +36,17 @@ type SlurmdNode struct {
 func NewSlurmConf(client kubernetes.Interface, wl *v1s.Slik) (*SlurmConf, error) {
 	log := zap.L().Sugar()
 
-	nodes, err := GetAllNodes(client)
+	nodes, err := slurmNodes(client)
 	if err != nil {
 		return nil, err
 	}
 
 	var conf SlurmConf
-	for i := range nodes.Items {
-		labels := nodes.Items[i].GetLabels()
-		cpusS, ok := labels["slik.vultr.com/cpus"]
-		if !ok {
-			continue
-		}
-
-		memoryS, ok := labels["slik.vultr.com/real_memory"]
-		if !ok {
-			continue
-		}
-
-		threadsPerCoreS, ok := labels["slik.vultr.com/threads_per_core"]
-		if !ok {
-			continue
-		}
+	for i := range nodes {
+		labels := nodes[i].GetLabels()
+		cpusS := labels[nodeLabelCPUs]
+		memoryS := labels[nodeLabelRealMemory]
+		threadsPerCoreS := labels[nodeLabelThreadsPerCore]
 
 		cpus, err := strconv.Atoi(cpusS)
 		if err != nil {
@@ -74,10 +63,10 @@ func NewSlurmConf(client kubernetes.Interface, wl *v1s.Slik) (*SlurmConf, error)
 			return nil, err
 		}
 
-		log.Infof("Node: %s, CPU: %d, Memory: %d, ThreadsPerCore: %d", nodes.Items[i].Name, cpus, memory, threadsPerCore)
+		log.Infof("Node: %s, CPU: %d, Memory: %d, ThreadsPerCore: %d", nodes[i].Name, cpus, memory, threadsPerCore)
 
 		conf.SlurmdNodes = append(conf.SlurmdNodes, SlurmdNode{
-			NodeName:       nodes.Items[i].Name,
+			NodeName:       nodes[i].Name,
 			CPUs:           cpus,
 			ThreadsPerCore: threadsPerCore,
 			RealMemory:     memory,
@@ -131,9 +120,9 @@ func buildSlurmconfConfigMap(client kubernetes.Interface, wl *v1s.Slik) error {
 
 	log.Infof("configmap (slurm.conf): %+v", cmSpec)
 
-	_, err2 := cm.Create(context.TODO(), cmSpec, metav1.CreateOptions{})
-	if err2 != nil {
-		return err2
+	_, err = cm.Create(context.TODO(), cmSpec, metav1.CreateOptions{})
+	if err != nil {
+		return ignoreAlreadyExists(err)
 	}
 
 	WaitForConfigMap(client, name, wl.Namespace)

@@ -4,29 +4,10 @@ import (
 	"testing"
 
 	appsv1 "k8s.io/api/apps/v1"
-	batchv1 "k8s.io/api/batch/v1"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes/fake"
 )
-
-var jobsFixture = []batchv1.Job{
-	{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      "job1",
-			Namespace: "default",
-		},
-	},
-}
-
-var cronJobsFixture = []batchv1.CronJob{
-	{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      "cronjob1",
-			Namespace: "default",
-		},
-	},
-}
 
 var deploymentFixture = []appsv1.Deployment{
 	{
@@ -98,8 +79,8 @@ var podsFixture = []v1.Pod{
 }
 
 type Fixture1 struct {
-	name         string
-	workloadType string
+	name      string
+	namespace string
 
 	result      bool
 	description string
@@ -107,80 +88,30 @@ type Fixture1 struct {
 
 func TestSlurmExists(t *testing.T) {
 	client := fake.NewSimpleClientset(
-		&batchv1.JobList{
-			Items: jobsFixture,
-		},
-		&batchv1.CronJobList{
-			Items: cronJobsFixture,
-		},
 		&appsv1.DeploymentList{
 			Items: deploymentFixture,
-		},
-		&v1.PodList{
-			Items: podsFixture,
 		},
 	)
 
 	fixtures := []Fixture1{
 		{
-			name: "job1",
+			name:      "deployment1",
+			namespace: "default",
 
 			result:      true,
-			description: "happy path",
+			description: "existing deployment",
 		},
 		{
-			name: "does_not_exist",
+			name:      "does_not_exist",
+			namespace: "default",
 
 			result:      false,
-			description: "bad path",
-		},
-		{
-			name: "cronjob1",
-
-			result:      true,
-			description: "happy path",
-		},
-		{
-			name: "does_not_exist",
-
-			result:      false,
-			description: "bad path",
-		},
-		{
-			name: "deployment1",
-
-			result:      true,
-			description: "happy path",
-		},
-		{
-			name: "does_not_exist",
-
-			result:      false,
-			description: "bad path",
-		},
-		{
-			name: "pod1",
-
-			result:      true,
-			description: "happy path",
-		},
-		{
-			name: "does_not_exist",
-
-			result:      false,
-			description: "bad path",
-		},
-		{
-			name:         "does_not_exist",
-			workloadType: "asdf",
-
-			result:      true,
-			description: "bad path",
+			description: "missing deployment",
 		},
 	}
 
 	for _, fixture := range fixtures {
-		result := SlurmExists(client, fixture.name, fixture.workloadType)
+		result := SlurmExists(client, fixture.name, fixture.namespace)
 
 		if result != fixture.result {
 			t.Errorf("\n%s\nexpect: %t\nactual: %t", fixture.description, fixture.result, result)

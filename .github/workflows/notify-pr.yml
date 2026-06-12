@@ -7,10 +7,16 @@ jobs:
     runs-on: ubuntu-latest
     name: Pull Request Notification
     steps:
-      - run: |
-          echo "{\"text\":\"slik : PR https://github.com/vultr/slik/pull/${{ github.event.number }} \"}" > mattermost.json
-      - uses: mattermost/action-mattermost-notify@master
-        with:
+      - name: Send Mattermost notification
+        env:
           MATTERMOST_WEBHOOK_URL: ${{ secrets.MATTERMOST_WEBHOOK_URL }}
-          MATTERMOST_USERNAME: ${{ secrets.MATTERMOST_USERNAME}}
-          MATTERMOST_ICON: ${{ secrets.MATTERMOST_ICON }}
+        run: |
+          if [ -z "${MATTERMOST_WEBHOOK_URL}" ]; then
+            echo "MATTERMOST_WEBHOOK_URL is not configured; skipping notification."
+            exit 0
+          fi
+
+          curl --fail --silent --show-error --output /dev/null \
+            -H 'Content-Type: application/json' \
+            -d '{"text":"slik : PR https://github.com/vultr/slik/pull/${{ github.event.number }} "}' \
+            "${MATTERMOST_WEBHOOK_URL}"

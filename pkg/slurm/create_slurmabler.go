@@ -3,7 +3,6 @@ package slurm
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/vultr/slik/cmd/slik/config"
 	v1s "github.com/vultr/slik/pkg/api/types/v1"
@@ -71,43 +70,15 @@ func buildSlurmablerDaemonSet(client kubernetes.Interface, wl *v1s.Slik) error {
 
 	log.Infof("slurmabler daemonset: %+v", slurmDSSpec)
 
-	_, err2 := ds.Create(context.TODO(), slurmDSSpec, metav1.CreateOptions{})
-	if err2 != nil {
-		return err2
+	_, err = ds.Create(context.TODO(), slurmDSSpec, metav1.CreateOptions{})
+	if err != nil {
+		return ignoreAlreadyExists(err)
 	}
 
 	log.Infof("slurmabler daemonset %s created", wl.Name)
 
-	for {
-		nodes, err := GetAllNodes(client)
-		if err != nil {
-			return err
-		}
-
-		var lablesSet int = 0
-
-		for i := range nodes.Items {
-			if len(nodes.Items[i].Spec.Taints) > 0 {
-				lablesSet++
-
-				continue
-			}
-
-			labels := nodes.Items[i].GetLabels()
-
-			_, ok := labels["slik.vultr.com/real_memory"]
-			if ok {
-				lablesSet++
-			}
-		}
-
-		if lablesSet == len(nodes.Items) {
-			break
-		} else {
-			log.Infof("node lacking labels...")
-
-			time.Sleep(1 * time.Second)
-		}
+	if err := waitForSlurmableNodes(client); err != nil {
+		return err
 	}
 
 	return nil

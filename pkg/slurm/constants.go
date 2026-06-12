@@ -10,4 +10,5 @@ const (
 
 const (
 	ConflictRetryIntervalSec int64 = 1
+	SlurmablerWaitTimeoutSec int   = 300
 )

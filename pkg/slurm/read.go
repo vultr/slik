@@ -12,6 +12,8 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
+const configMapWaitAttempts = 30
+
 // SlurmExists returns true if the workload exists
 func SlurmExists(client kubernetes.Interface, name, namespace string) bool {
 	return DeploymentExists(client, name, namespace)
@@ -19,82 +21,49 @@ func SlurmExists(client kubernetes.Interface, name, namespace string) bool {
 
 // DeploymentExists returns true if the deployment exists
 func DeploymentExists(client kubernetes.Interface, name, namespace string) bool {
-	log := zap.L().Sugar()
-
-	if _, err := GetDeployment(client, name, namespace); err != nil {
-		if errors.IsNotFound(err) {
-			return false
-		}
-
-		log.Error(err)
-
-		return false
-	}
-
-	return true
+	return resourceExists(func() error {
+		_, err := GetDeployment(client, name, namespace)
+		return err
+	})
 }
 
 // DaemonSetExists returns true if the daemonset exists
 func DaemonSetExists(client kubernetes.Interface, name, namespace string) bool {
-	log := zap.L().Sugar()
-
-	if _, err := GetDaemonSet(client, name, namespace); err != nil {
-		if errors.IsNotFound(err) {
-			return false
-		}
-
-		log.Error(err)
-
-		return false
-	}
-
-	return true
+	return resourceExists(func() error {
+		_, err := GetDaemonSet(client, name, namespace)
+		return err
+	})
 }
 
 // ConfigMapExists returns true if the configmap exists
 func ConfigMapExists(client kubernetes.Interface, name, namespace string) bool {
-	log := zap.L().Sugar()
-
-	if _, err := GetConfigMap(client, name, namespace); err != nil {
-		if errors.IsNotFound(err) {
-			return false
-		}
-
-		log.Error(err)
-
-		return false
-	}
-
-	return true
+	return resourceExists(func() error {
+		_, err := GetConfigMap(client, name, namespace)
+		return err
+	})
 }
 
 // ServiceExists returns true if the service exists
 func ServiceExists(client kubernetes.Interface, name, namespace string) bool {
-	log := zap.L().Sugar()
-
-	if _, err := GetService(client, name, namespace); err != nil {
-		if errors.IsNotFound(err) {
-			return false
-		}
-
-		log.Error(err)
-
-		return false
-	}
-
-	return true
+	return resourceExists(func() error {
+		_, err := GetService(client, name, namespace)
+		return err
+	})
 }
 
 // StatefulsetExists returns true if the statefulset exists
 func StatefulsetExists(client kubernetes.Interface, name, namespace string) bool {
-	log := zap.L().Sugar()
+	return resourceExists(func() error {
+		_, err := GetStatefulSet(client, name, namespace)
+		return err
+	})
+}
 
-	if _, err := GetStatefulSet(client, name, namespace); err != nil {
-		if errors.IsNotFound(err) {
-			return false
+func resourceExists(get func() error) bool {
+	if err := get(); err != nil {
+		if !errors.IsNotFound(err) {
+			zap.L().Sugar().Error(err)
 		}
-
-		log.Error(err)
 
 		return false
 	}
@@ -141,7 +110,7 @@ func GetNode(client kubernetes.Interface, name string) (*v1.Node, error) {
 func WaitForConfigMap(client kubernetes.Interface, name, namespace string) {
 	log := zap.L().Sugar()
 
-	for i := 0; i < 30; i++ { // TODO set 30 to var
+	for i := 0; i < configMapWaitAttempts; i++ {
 		if ConfigMapExists(client, name, namespace) {
 			return
 		}
@@ -174,28 +143,18 @@ func GetDeploymentStatus(client kubernetes.Interface, name, namespace string) st
 
 // PodExists returns true if post exists
 func PodExists(client kubernetes.Interface, name, namespace string) bool {
-	log := zap.L().Sugar()
-
-	if _, err := GetPod(client, name, namespace); err != nil {
-		log.Error(err)
-
-		return false
-	}
-
-	return true
+	return resourceExists(func() error {
+		_, err := GetPod(client, name, namespace)
+		return err
+	})
 }
 
 // NamespaceExists returns true if the namespace exists
 func NamespaceExists(client kubernetes.Interface, namespace string) bool {
-	log := zap.L().Sugar()
-
-	if _, err := GetNamespace(client, namespace); err != nil {
-		log.Error(err)
-
-		return false
-	}
-
-	return true
+	return resourceExists(func() error {
+		_, err := GetNamespace(client, namespace)
+		return err
+	})
 }
 
 // GetPod returns the pod if it exists

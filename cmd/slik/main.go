@@ -44,12 +44,8 @@ func main() { //nolint
 
 	// Used for clean shutdown, catches signals
 	ctx, cancel := context.WithCancel(context.Background())
-	go func() {
-		counter := 0
-		for {
-			helpers.Signals(cancel, &counter)
-		}
-	}()
+	counter := 0
+	go helpers.Signals(cancel, &counter)
 
 	g, gCtx := errgroup.WithContext(ctx)
 

@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	appsv1 "k8s.io/api/apps/v1"
-	batchv1 "k8s.io/api/batch/v1"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes/fake"
 )
@@ -19,12 +18,6 @@ type Fixture6 struct {
 
 func TestSlurmDelete(t *testing.T) {
 	client := fake.NewSimpleClientset(
-		&batchv1.JobList{
-			Items: jobsFixture,
-		},
-		&batchv1.CronJobList{
-			Items: cronJobsFixture,
-		},
 		&appsv1.DeploymentList{
 			Items: deploymentFixture,
 		},

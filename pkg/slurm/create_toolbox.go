@@ -103,9 +103,9 @@ func buildToolboxDeployment(client kubernetes.Interface, wl *v1s.Slik) error {
 
 	log.Infof("slurm_toolbox deployment: %+v", slurmToolboxDep)
 
-	_, err2 := ds.Create(context.TODO(), slurmToolboxDep, metav1.CreateOptions{})
-	if err2 != nil {
-		return err2
+	_, err = ds.Create(context.TODO(), slurmToolboxDep, metav1.CreateOptions{})
+	if err != nil {
+		return ignoreAlreadyExists(err)
 	}
 
 	log.Infof("slurm_toolbox deployments %s created", wl.Name)

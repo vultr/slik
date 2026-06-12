@@ -3,21 +3,24 @@
 ## Overview
 An operator to deploy slurm in kubernetes.
 
-Note: This project has been archived in favor of the [Slinky](https://github.com/SlinkyProject) project. 
+Note: This project has been archived in favor of the [Slinky](https://github.com/SlinkyProject) project.
 
 ## Requirements
-- Kubernetes v1.28+ with `Sidecarcontainers` feature gate enabled( Enabled by default in v1.29 ) 
+- Kubernetes v1.36+.
+- Go 1.26+ if building from source.
 
 ## Usage
-Everything is public, including the slurm images. You do not need any auth or secret sauce to use this. If you intend to use in a different cloud platform you may need to make tweaks to the mariadb statefulset. If you intend to deploy slurm on arm you'll need to build arm images.
+Everything is public, including the Slurm images. You do not need any auth or secret sauce to use this. If you intend to use a different cloud platform you may need to tweak the MariaDB storage class. If you intend to deploy Slurm on ARM, you'll need to build ARM images.
 
 You can deploy slik into your kubernetes cluster simply with: `helm install -f helm/slik/values.yaml slik ./helm/slik/`
 
 You can then deploy a slurm cluster with one of the samples: `kubectl apply -f payloads/simple.yaml`
 
+For a complete walkthrough, see [Deploying SLiK](docs/deployment.md).
+
 If you deploy "full" slurm cluster (with database) it can take awhile to initialize MariaDB.
 
-You then interact with the slurm cluster through the toolbox pod: `kubectl exec --it toolbox -- bash`
+You then interact with the Slurm cluster through the toolbox pod: `kubectl exec -n default -it deploy/test-slurm-toolbox -- bash`
 
 Sample yaml:
 

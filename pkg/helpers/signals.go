@@ -17,29 +17,31 @@ func Signals(cancel context.CancelFunc, counter *int) {
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM, syscall.SIGINT, syscall.SIGUSR1)
+	defer signal.Stop(c)
 
-	sig := <-c
-	log.With(
-		"context", "helpers",
-	).Infof("signal %s received", sig.String())
+	for sig := range c {
+		log.With(
+			"context", "helpers",
+		).Infof("signal %s received", sig.String())
 
-	switch sig {
-	case syscall.SIGINT, syscall.SIGTERM:
-		*counter++
-		cancel()
+		switch sig {
+		case syscall.SIGINT, syscall.SIGTERM:
+			*counter++
+			cancel()
 
-		if *counter > 1 {
-			log.With(
-				"context", "helpers",
-			).Infof("force terminating")
+			if *counter > 1 {
+				log.With(
+					"context", "helpers",
+				).Infof("force terminating")
 
-			os.Exit(0) //nolint
-		}
-	case syscall.SIGUSR1:
-		if err := dumpHeap(); err != nil {
-			log.With(
-				"context", "helpers",
-			).Error(err)
+				os.Exit(0) //nolint
+			}
+		case syscall.SIGUSR1:
+			if err := dumpHeap(); err != nil {
+				log.With(
+					"context", "helpers",
+				).Error(err)
+			}
 		}
 	}
 }

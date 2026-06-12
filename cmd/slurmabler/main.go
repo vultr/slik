@@ -61,6 +61,10 @@ func main() { //nolint
 	}
 
 	labels := node.GetLabels()
+	if labels == nil {
+		labels = map[string]string{}
+	}
+
 	labels["slik.vultr.com/nodename"] = labeler.NodeName
 	labels["slik.vultr.com/cpus"] = fmt.Sprintf("%d", labeler.CPUs)
 	labels["slik.vultr.com/boards"] = fmt.Sprintf("%d", labeler.Boards)
