@@ -36,7 +36,7 @@ spec:
                   properties:
                     storage_size:
                       type: string
-                      default: 40G
+                      default: 50G
                       pattern: ^([+-]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$
                     storage_class:
                       type: string

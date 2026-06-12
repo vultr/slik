@@ -6,7 +6,8 @@ An operator to deploy slurm in kubernetes.
 Note: This project has been archived in favor of the [Slinky](https://github.com/SlinkyProject) project.
 
 ## Requirements
-- Kubernetes v1.28+ with the `SidecarContainers` feature gate enabled. It is enabled by default in v1.29+.
+- Kubernetes v1.36+.
+- Go 1.26+ if building from source.
 
 ## Usage
 Everything is public, including the Slurm images. You do not need any auth or secret sauce to use this. If you intend to use a different cloud platform you may need to tweak the MariaDB storage class. If you intend to deploy Slurm on ARM, you'll need to build ARM images.

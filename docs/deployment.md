@@ -4,8 +4,8 @@ This guide covers deploying the SLiK operator and creating a Slurm cluster from 
 
 ## Prerequisites
 
-- Kubernetes v1.28 or newer.
-- The `SidecarContainers` feature gate enabled. It is enabled by default in Kubernetes v1.29+.
+- Kubernetes v1.36 or newer.
+- Go 1.26 or newer if building the operator or helper images from source.
 - `kubectl` configured for the target cluster.
 - Helm 3.
 - Worker nodes that can schedule the `slurmabler` DaemonSet. Nodes with `NoSchedule` or `NoExecute` taints are ignored by SLiK.
@@ -26,7 +26,7 @@ kubectl get pods
 kubectl logs deploy/slik-operator
 ```
 
-The Helm chart installs the CRD, service account, config map, and operator deployment.
+The Helm chart declares `kubeVersion: >=1.36.0-0` and installs the CRD, service account, config map, and operator deployment.
 
 ## Deploy A Simple Slurm Cluster
 
