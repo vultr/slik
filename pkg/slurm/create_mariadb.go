@@ -1,7 +1,6 @@
 package slurm
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/vultr/slik/cmd/slik/config"
@@ -20,8 +19,6 @@ import (
 func buildMariaDBConfigMap(client kubernetes.Interface, wl *v1s.Slik) error {
 	log := zap.L().Sugar()
 
-	cm := client.CoreV1().ConfigMaps(wl.Namespace)
-
 	cmCfgSpec := &v1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      fmt.Sprintf("%s-mariadb-config", wl.Name),
@@ -37,9 +34,8 @@ func buildMariaDBConfigMap(client kubernetes.Interface, wl *v1s.Slik) error {
 
 	log.Infof("configmap (mariadb-config): %+v", cmCfgSpec)
 
-	_, err := cm.Create(context.TODO(), cmCfgSpec, metav1.CreateOptions{})
-	if err != nil {
-		return ignoreAlreadyExists(err)
+	if err := applyConfigMap(client, cmCfgSpec); err != nil {
+		return err
 	}
 
 	WaitForConfigMap(client, fmt.Sprintf("%s-mariadb-config", wl.Name), wl.Namespace)
@@ -59,9 +55,8 @@ func buildMariaDBConfigMap(client kubernetes.Interface, wl *v1s.Slik) error {
 
 	log.Infof("configmap (mariadb-init): %+v", cmInitSpec)
 
-	_, err = cm.Create(context.TODO(), cmInitSpec, metav1.CreateOptions{})
-	if err != nil {
-		return ignoreAlreadyExists(err)
+	if err := applyConfigMap(client, cmInitSpec); err != nil {
+		return err
 	}
 
 	WaitForConfigMap(client, fmt.Sprintf("%s-mariadb-init", wl.Name), wl.Namespace)
@@ -72,14 +67,16 @@ func buildMariaDBConfigMap(client kubernetes.Interface, wl *v1s.Slik) error {
 func buildMariaDBStatefulSet(client kubernetes.Interface, wl *v1s.Slik) error {
 	log := zap.L().Sugar()
 
-	msts := client.AppsV1().StatefulSets(wl.Namespace)
-
 	aff, err := mkAffinity(wl)
 	if err != nil {
 		return err
 	}
 
 	mariaDBCont := mkMariaDBContainer(wl)
+	annotations := configChecksumAnnotations(client, wl.Namespace,
+		fmt.Sprintf("%s-mariadb-config", wl.Name),
+		fmt.Sprintf("%s-mariadb-init", wl.Name),
+	)
 
 	log.Infof("mariadb container: %+v", *mariaDBCont)
 
@@ -104,8 +101,9 @@ func buildMariaDBStatefulSet(client kubernetes.Interface, wl *v1s.Slik) error {
 			},
 			Template: v1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:      "mariadb",
-					Namespace: wl.Namespace,
+					Name:        "mariadb",
+					Namespace:   wl.Namespace,
+					Annotations: annotations,
 					Labels: map[string]string{
 						"app":                          "mariadb",
 						"app.kubernetes.io/managed-by": "slik",
@@ -165,9 +163,13 @@ func buildMariaDBStatefulSet(client kubernetes.Interface, wl *v1s.Slik) error {
 
 	log.Infof("mariadb statefulset: %+v", mariadbSTS)
 
-	_, err = msts.Create(context.TODO(), mariadbSTS, metav1.CreateOptions{})
-	if err != nil {
-		return ignoreAlreadyExists(err)
+	if err := applyStatefulSet(client, mariadbSTS); err != nil {
+		return err
+	}
+
+	pvcName := fmt.Sprintf("%s-mariadb-%s-mariadb-0", wl.Name, wl.Name)
+	if err := updatePVCStorage(client, pvcName, wl.Namespace, wl.Spec.MariaDB.StorageSize); err != nil {
+		return err
 	}
 
 	log.Infof("mariadb statefulset %s created", wl.Name)
@@ -232,8 +234,6 @@ func mkMariaDBContainer(wl *v1s.Slik) *v1.Container {
 func buildMariaDBService(client kubernetes.Interface, wl *v1s.Slik) error {
 	log := zap.L().Sugar()
 
-	svc := client.CoreV1().Services(wl.Namespace)
-
 	svcSpec := &v1.Service{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      fmt.Sprintf("%s-mariadb", wl.Name),
@@ -261,9 +261,8 @@ func buildMariaDBService(client kubernetes.Interface, wl *v1s.Slik) error {
 
 	log.Infof("mariadb service: %+v", svcSpec)
 
-	_, err := svc.Create(context.TODO(), svcSpec, metav1.CreateOptions{})
-	if err != nil {
-		return ignoreAlreadyExists(err)
+	if err := applyService(client, svcSpec); err != nil {
+		return err
 	}
 
 	log.Infof("mariadb service %s created", wl.Name)

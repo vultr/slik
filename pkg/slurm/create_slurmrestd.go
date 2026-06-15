@@ -1,7 +1,6 @@
 package slurm
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/vultr/slik/cmd/slik/config"
@@ -18,8 +17,6 @@ import (
 func buildSlurmrestdDeployment(client kubernetes.Interface, wl *v1s.Slik) error {
 	log := zap.L().Sugar()
 
-	ds := client.AppsV1().Deployments(wl.Namespace)
-
 	aff, err := mkAffinity(wl)
 	if err != nil {
 		return err
@@ -27,6 +24,10 @@ func buildSlurmrestdDeployment(client kubernetes.Interface, wl *v1s.Slik) error 
 
 	mungeCont := mkMungeContainer(wl)
 	slurmrestdCont := mkSlurmrestdContainer(wl)
+	annotations := configChecksumAnnotations(client, wl.Namespace,
+		fmt.Sprintf("%s-munged", wl.Name),
+		fmt.Sprintf("%s-slurm", wl.Name),
+	)
 
 	log.Infof("munged container: %+v", *mungeCont)
 	log.Infof("slurmrestd container: %+v", *slurmrestdCont)
@@ -52,8 +53,9 @@ func buildSlurmrestdDeployment(client kubernetes.Interface, wl *v1s.Slik) error 
 			},
 			Template: v1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:      wl.Name,
-					Namespace: wl.Namespace,
+					Name:        wl.Name,
+					Namespace:   wl.Namespace,
+					Annotations: annotations,
 					Labels: map[string]string{
 						"app":                          fmt.Sprintf("%s-slurmrestd", wl.Name),
 						"app.kubernetes.io/managed-by": "slik",
@@ -104,9 +106,8 @@ func buildSlurmrestdDeployment(client kubernetes.Interface, wl *v1s.Slik) error 
 
 	log.Infof("slurmrestd deployment: %+v", slurmrestdDep)
 
-	_, err = ds.Create(context.TODO(), slurmrestdDep, metav1.CreateOptions{})
-	if err != nil {
-		return ignoreAlreadyExists(err)
+	if err := applyDeployment(client, slurmrestdDep); err != nil {
+		return err
 	}
 
 	log.Infof("slurmrestd deployments %s created", wl.Name)
@@ -116,8 +117,6 @@ func buildSlurmrestdDeployment(client kubernetes.Interface, wl *v1s.Slik) error 
 
 func buildSlurmrestdService(client kubernetes.Interface, wl *v1s.Slik) error {
 	log := zap.L().Sugar()
-
-	svc := client.CoreV1().Services(wl.Namespace)
 
 	svcSpec := &v1.Service{
 		ObjectMeta: metav1.ObjectMeta{
@@ -146,9 +145,8 @@ func buildSlurmrestdService(client kubernetes.Interface, wl *v1s.Slik) error {
 
 	log.Infof("slurmrestd service: %+v", svcSpec)
 
-	_, err := svc.Create(context.TODO(), svcSpec, metav1.CreateOptions{})
-	if err != nil {
-		return ignoreAlreadyExists(err)
+	if err := applyService(client, svcSpec); err != nil {
+		return err
 	}
 
 	log.Infof("slurmrestd service %s created", wl.Name)

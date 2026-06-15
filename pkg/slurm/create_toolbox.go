@@ -1,7 +1,6 @@
 package slurm
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/vultr/slik/cmd/slik/config"
@@ -17,8 +16,6 @@ import (
 func buildToolboxDeployment(client kubernetes.Interface, wl *v1s.Slik) error {
 	log := zap.L().Sugar()
 
-	ds := client.AppsV1().Deployments(wl.Namespace)
-
 	aff, err := mkAffinity(wl)
 	if err != nil {
 		return err
@@ -26,6 +23,10 @@ func buildToolboxDeployment(client kubernetes.Interface, wl *v1s.Slik) error {
 
 	mungeCont := mkMungeContainer(wl)
 	slurmToolboxCont := mkSlurmToolboxContainer(wl)
+	annotations := configChecksumAnnotations(client, wl.Namespace,
+		fmt.Sprintf("%s-munged", wl.Name),
+		fmt.Sprintf("%s-slurm", wl.Name),
+	)
 
 	log.Infof("munged container: %+v", *mungeCont)
 	log.Infof("slurm-toolbox container: %+v", *slurmToolboxCont)
@@ -51,8 +52,9 @@ func buildToolboxDeployment(client kubernetes.Interface, wl *v1s.Slik) error {
 			},
 			Template: v1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:      wl.Name,
-					Namespace: wl.Namespace,
+					Name:        wl.Name,
+					Namespace:   wl.Namespace,
+					Annotations: annotations,
 					Labels: map[string]string{
 						"app":                          "slurm-toolbox",
 						"app.kubernetes.io/managed-by": "slik",
@@ -103,9 +105,8 @@ func buildToolboxDeployment(client kubernetes.Interface, wl *v1s.Slik) error {
 
 	log.Infof("slurm_toolbox deployment: %+v", slurmToolboxDep)
 
-	_, err = ds.Create(context.TODO(), slurmToolboxDep, metav1.CreateOptions{})
-	if err != nil {
-		return ignoreAlreadyExists(err)
+	if err := applyDeployment(client, slurmToolboxDep); err != nil {
+		return err
 	}
 
 	log.Infof("slurm_toolbox deployments %s created", wl.Name)

@@ -40,10 +40,24 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
           DEFAULT_BUMP: "none"
-  
-  goreleaser:
+
+  docker-credentials:
     runs-on: ubuntu-latest
     needs: create-tag
+    steps:
+      - name: Validate Docker registry credentials
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          if [[ -z "${DOCKER_USERNAME}" || -z "${DOCKER_PASSWORD}" ]]; then
+            echo "::error::DOCKER_USERNAME and DOCKER_PASSWORD secrets must be set to publish release images."
+            exit 1
+          fi
+
+  goreleaser:
+    runs-on: ubuntu-latest
+    needs: ["create-tag", "docker-credentials"]
     steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -59,11 +73,11 @@ jobs:
           cache: true
       
       - name: Docker Login
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: |
-          docker login https://ewr.vultrcr.com/slurm -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
+        uses: docker/login-action@v3
+        with:
+          registry: ewr.vultrcr.com
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
       
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
@@ -83,7 +97,7 @@ jobs:
 
   munged:
     runs-on: ubuntu-latest
-    needs: create-tag
+    needs: ["create-tag", "docker-credentials"]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -93,11 +107,11 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Docker Login
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: |
-          docker login https://ewr.vultrcr.com/slurm -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
+        uses: docker/login-action@v3
+        with:
+          registry: ewr.vultrcr.com
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
         
       - name: Build and push
         uses: docker/build-push-action@v5
@@ -111,7 +125,7 @@ jobs:
 
   slurmctld:
     runs-on: ubuntu-latest
-    needs: create-tag
+    needs: ["create-tag", "docker-credentials"]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -121,11 +135,11 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Docker Login
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: |
-          docker login https://ewr.vultrcr.com/slurm -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
+        uses: docker/login-action@v3
+        with:
+          registry: ewr.vultrcr.com
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
         
       - name: Build and push
         uses: docker/build-push-action@v5
@@ -139,7 +153,7 @@ jobs:
 
   slurmd:
     runs-on: ubuntu-latest
-    needs: create-tag
+    needs: ["create-tag", "docker-credentials"]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -149,11 +163,11 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Docker Login
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: |
-          docker login https://ewr.vultrcr.com/slurm -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
+        uses: docker/login-action@v3
+        with:
+          registry: ewr.vultrcr.com
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
         
       - name: Build and push
         uses: docker/build-push-action@v5
@@ -167,7 +181,7 @@ jobs:
 
   toolbox:
     runs-on: ubuntu-latest
-    needs: create-tag
+    needs: ["create-tag", "docker-credentials"]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -177,11 +191,11 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Docker Login
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: |
-          docker login https://ewr.vultrcr.com/slurm -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
+        uses: docker/login-action@v3
+        with:
+          registry: ewr.vultrcr.com
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
         
       - name: Build and push
         uses: docker/build-push-action@v5
@@ -195,7 +209,7 @@ jobs:
 
   slurmdbd:
     runs-on: ubuntu-latest
-    needs: create-tag
+    needs: ["create-tag", "docker-credentials"]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -205,11 +219,11 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Docker Login
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: |
-          docker login https://ewr.vultrcr.com/slurm -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
+        uses: docker/login-action@v3
+        with:
+          registry: ewr.vultrcr.com
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
         
       - name: Build and push
         uses: docker/build-push-action@v5
@@ -223,7 +237,7 @@ jobs:
 
   slurmrestd:
     runs-on: ubuntu-latest
-    needs: create-tag
+    needs: ["create-tag", "docker-credentials"]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -233,11 +247,11 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Docker Login
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: |
-          docker login https://ewr.vultrcr.com/slurm -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
+        uses: docker/login-action@v3
+        with:
+          registry: ewr.vultrcr.com
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
         
       - name: Build and push
         uses: docker/build-push-action@v5
@@ -251,7 +265,7 @@ jobs:
 
   release:
     runs-on: ubuntu-latest
-    needs: ["goreleaser", "create-tag"]
+    needs: ["goreleaser", "munged", "slurmctld", "slurmd", "toolbox", "slurmdbd", "slurmrestd", "create-tag"]
     name: Release Notification
     steps:
       - uses: mattermost/action-mattermost-notify@2.0.0

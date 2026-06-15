@@ -1,7 +1,6 @@
 package slurm
 
 import (
-	"context"
 	b64 "encoding/base64"
 	"fmt"
 
@@ -19,9 +18,10 @@ import (
 func buildMungedConfigMap(client kubernetes.Interface, wl *v1s.Slik) error {
 	log := zap.L().Sugar()
 
-	cm := client.CoreV1().ConfigMaps(wl.Namespace)
-
 	name := fmt.Sprintf("%s-munged", wl.Name)
+	if ConfigMapExists(client, name, wl.Namespace) {
+		return nil
+	}
 
 	mk, err := munge.NewMungeKey()
 	if err != nil {
@@ -48,9 +48,8 @@ func buildMungedConfigMap(client kubernetes.Interface, wl *v1s.Slik) error {
 
 	log.Infof("configmap (munge): %+v", cmSpec)
 
-	_, err = cm.Create(context.TODO(), cmSpec, metav1.CreateOptions{})
-	if err != nil {
-		return ignoreAlreadyExists(err)
+	if err := applyConfigMap(client, cmSpec); err != nil {
+		return err
 	}
 
 	WaitForConfigMap(client, name, wl.Namespace)
