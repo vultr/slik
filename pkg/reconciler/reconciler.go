@@ -162,6 +162,28 @@ func loop() error {
 				continue
 			}
 		case StateActive:
+			log.Infof("updating slurm cluster: %s", s.Name)
+			if !checks(&s) {
+				s.Status.State = StateFailed
+				if _, err := slurmcs.Slik(context.TODO()).UpdateStatus(&s, v1.UpdateOptions{}); err != nil {
+					log.Error(err)
+				}
+
+				continue
+			}
+
+			cs, err := connectors.GetKubernetesConn()
+			if err != nil {
+				log.Error(err)
+
+				continue
+			}
+
+			if err := slurm.CreateSlurm(cs, &s); err != nil {
+				log.Error(err)
+
+				continue
+			}
 
 		case StateFailed:
 			log.Infof("checking failed slurm cluster: %s", s.Name)

@@ -1,7 +1,6 @@
 package slurm
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/vultr/slik/cmd/slik/config"
@@ -16,8 +15,6 @@ import (
 
 func buildSlurmablerDaemonSet(client kubernetes.Interface, wl *v1s.Slik) error {
 	log := zap.L().Sugar()
-
-	ds := client.AppsV1().DaemonSets(wl.Namespace)
 
 	aff, err := mkAffinity(wl)
 	if err != nil {
@@ -70,9 +67,8 @@ func buildSlurmablerDaemonSet(client kubernetes.Interface, wl *v1s.Slik) error {
 
 	log.Infof("slurmabler daemonset: %+v", slurmDSSpec)
 
-	_, err = ds.Create(context.TODO(), slurmDSSpec, metav1.CreateOptions{})
-	if err != nil {
-		return ignoreAlreadyExists(err)
+	if err := applyDaemonSet(client, slurmDSSpec); err != nil {
+		return err
 	}
 
 	log.Infof("slurmabler daemonset %s created", wl.Name)

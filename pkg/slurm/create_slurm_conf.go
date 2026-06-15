@@ -2,7 +2,6 @@ package slurm
 
 import (
 	"bytes"
-	"context"
 	"fmt"
 	"html/template"
 	"strconv"
@@ -85,8 +84,6 @@ func NewSlurmConf(client kubernetes.Interface, wl *v1s.Slik) (*SlurmConf, error)
 func buildSlurmconfConfigMap(client kubernetes.Interface, wl *v1s.Slik) error {
 	log := zap.L().Sugar()
 
-	cm := client.CoreV1().ConfigMaps(wl.Namespace)
-
 	conf, err := NewSlurmConf(client, wl)
 	if err != nil {
 		return err
@@ -120,9 +117,8 @@ func buildSlurmconfConfigMap(client kubernetes.Interface, wl *v1s.Slik) error {
 
 	log.Infof("configmap (slurm.conf): %+v", cmSpec)
 
-	_, err = cm.Create(context.TODO(), cmSpec, metav1.CreateOptions{})
-	if err != nil {
-		return ignoreAlreadyExists(err)
+	if err := applyConfigMap(client, cmSpec); err != nil {
+		return err
 	}
 
 	WaitForConfigMap(client, name, wl.Namespace)

@@ -1,7 +1,6 @@
 package slurm
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/vultr/slik/cmd/slik/config"
@@ -17,8 +16,6 @@ import (
 
 func buildSlurmdService(client kubernetes.Interface, wl *v1s.Slik) error {
 	log := zap.L().Sugar()
-
-	svc := client.CoreV1().Services(wl.Namespace)
 
 	nodes, err := slurmNodes(client)
 	if err != nil {
@@ -54,9 +51,8 @@ func buildSlurmdService(client kubernetes.Interface, wl *v1s.Slik) error {
 
 		log.Infof("slurmd service: %+v", svcSpec)
 
-		_, err := svc.Create(context.TODO(), svcSpec, metav1.CreateOptions{})
-		if err != nil {
-			return ignoreAlreadyExists(err)
+		if err := applyService(client, svcSpec); err != nil {
+			return err
 		}
 
 		log.Infof("slurmd service %s created", wl.Name)
@@ -74,8 +70,6 @@ func buildSlurmdDeployments(client kubernetes.Interface, wl *v1s.Slik) error {
 	}
 
 	for i := range nodes {
-		ds := client.AppsV1().Deployments(wl.Namespace)
-
 		aff, err := mkAffinity(wl)
 		if err != nil {
 			return err
@@ -83,6 +77,10 @@ func buildSlurmdDeployments(client kubernetes.Interface, wl *v1s.Slik) error {
 
 		mungeCont := mkMungeContainer(wl)
 		slurmdCont := mkSlurmdContainer(wl)
+		annotations := configChecksumAnnotations(client, wl.Namespace,
+			fmt.Sprintf("%s-munged", wl.Name),
+			fmt.Sprintf("%s-slurm", wl.Name),
+		)
 
 		log.Infof("munged container: %+v", *mungeCont)
 		log.Infof("slurmd container: %+v", *slurmdCont)
@@ -110,8 +108,9 @@ func buildSlurmdDeployments(client kubernetes.Interface, wl *v1s.Slik) error {
 				},
 				Template: v1.PodTemplateSpec{
 					ObjectMeta: metav1.ObjectMeta{
-						Name:      wl.Name,
-						Namespace: wl.Namespace,
+						Name:        wl.Name,
+						Namespace:   wl.Namespace,
+						Annotations: annotations,
 						Labels: map[string]string{
 							"app":                          fmt.Sprintf("%s-slurmd", wl.Name),
 							"app.kubernetes.io/managed-by": "slik",
@@ -167,9 +166,8 @@ func buildSlurmdDeployments(client kubernetes.Interface, wl *v1s.Slik) error {
 
 		log.Infof("slurmd deployment: %+v", slurmDepSpec)
 
-		_, err = ds.Create(context.TODO(), slurmDepSpec, metav1.CreateOptions{})
-		if err != nil {
-			return ignoreAlreadyExists(err)
+		if err := applyDeployment(client, slurmDepSpec); err != nil {
+			return err
 		}
 	}
 

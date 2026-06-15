@@ -36,7 +36,7 @@ spec:
     storage_class: vultr-block-storage-hdd-retain
 ```
 
-Update operations are not currently supported, you should rebuild the cluster instead. Delete the slurm deployment, then re-create it. If you use a PVC that is retained you should not lose any data.
+You can update a Slurm cluster by editing and re-applying the `Slik` resource. The operator reconciles owned Deployments, DaemonSets, Services, ConfigMaps, optional `slurmdbd`/`slurmrestd`/MariaDB components, and MariaDB PVC expansion when the storage class allows it. The generated `munge.key` is preserved across updates.
 
 You can list the slurm clusters: `kubectl get sliks`
 

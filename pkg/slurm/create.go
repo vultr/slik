@@ -41,6 +41,31 @@ func CreateSlurm(client kubernetes.Interface, wl *v1s.Slik) error {
 		return err
 	}
 
+	// slurmdbd and mariadb
+	if wl.Spec.Slurmdbd {
+		// mariadb
+		if err := buildMariaDBStatefulSet(client, wl); err != nil {
+			return err
+		}
+
+		if err := buildMariaDBService(client, wl); err != nil {
+			return err
+		}
+
+		// slurmdbd
+		if err := buildSlurmdbdDeployment(client, wl); err != nil {
+			return err
+		}
+
+		if err := buildSlurmdbdService(client, wl); err != nil {
+			return err
+		}
+
+		if err := waitForDeploymentAvailable(client, wl.Namespace, wl.Name+"-slurmdbd"); err != nil {
+			return err
+		}
+	}
+
 	// slurmctld
 	if err := buildSlurmctlDeployment(client, wl); err != nil {
 		return err
@@ -64,27 +89,6 @@ func CreateSlurm(client kubernetes.Interface, wl *v1s.Slik) error {
 		return err
 	}
 
-	// slurmdbd and mariadb
-	if wl.Spec.Slurmdbd {
-		// mariadb
-		if err := buildMariaDBStatefulSet(client, wl); err != nil {
-			return err
-		}
-
-		if err := buildMariaDBService(client, wl); err != nil {
-			return err
-		}
-
-		// slurmdbd
-		if err := buildSlurmdbdDeployment(client, wl); err != nil {
-			return err
-		}
-
-		if err := buildSlurmdbdService(client, wl); err != nil {
-			return err
-		}
-	}
-
 	// slurmrestd
 	if wl.Spec.Slurmdbd && wl.Spec.Slurmrestd {
 		if err := buildSlurmrestdDeployment(client, wl); err != nil {
@@ -94,6 +98,10 @@ func CreateSlurm(client kubernetes.Interface, wl *v1s.Slik) error {
 		if err := buildSlurmrestdService(client, wl); err != nil {
 			return err
 		}
+	}
+
+	if err := reconcileDisabledComponents(client, wl.Name, wl.Namespace, wl.Spec.Slurmdbd, wl.Spec.Slurmrestd); err != nil {
+		return err
 	}
 
 	return nil
