@@ -3,8 +3,6 @@
 ## Overview
 An operator to deploy slurm in kubernetes.
 
-Note: This project has been archived in favor of the [Slinky](https://github.com/SlinkyProject) project.
-
 ## Requirements
 - Kubernetes v1.36+.
 - Go 1.26+ if building from source.
