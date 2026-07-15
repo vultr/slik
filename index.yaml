@@ -1,0 +1,20 @@
+apiVersion: v1
+entries:
+  slik:
+  - apiVersion: v2
+    appVersion: v0.1.0
+    created: "2026-07-15T18:28:20.245713725Z"
+    description: SLiK operator Helm chart
+    digest: 50149ebebd3d4e91b96b9ffd2c310b98b405a513b7b11d4815d7514e3d61471a
+    home: https://github.com/vultr/slik
+    kubeVersion: '>=1.36.0-0'
+    maintainers:
+    - name: Josten Landtroop
+    name: slik
+    sources:
+    - https://github.com/vultr/slik
+    type: application
+    urls:
+    - https://github.com/vultr/slik/releases/download/helm-0.0.1/slik-0.0.1.tgz
+    version: 0.0.1
+generated: "2026-07-15T18:28:20.245724701Z"
