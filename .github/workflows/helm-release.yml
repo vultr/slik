@@ -18,6 +18,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
       - name: Parse release version
         id: release
         env:
@@ -48,5 +53,10 @@ jobs:
 
       - name: Publish chart
         uses: helm/chart-releaser-action@v1.7.0
+        with:
+          charts_dir: helm
+          config: .cr.yaml
+          mark_as_latest: false
+          pages_branch: gh-pages
         env:
           CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}

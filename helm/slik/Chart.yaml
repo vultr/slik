@@ -1,6 +1,7 @@
 apiVersion: v2
 name: slik
 version: 0.0.1
+appVersion: "v0.1.0"
 kubeVersion: ">=1.36.0-0"
 description: SLiK operator Helm chart
 type: application
