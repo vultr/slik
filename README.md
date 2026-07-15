@@ -8,9 +8,17 @@ An operator to deploy slurm in kubernetes.
 - Go 1.26+ if building from source.
 
 ## Usage
-Everything is public, including the Slurm images. You do not need any auth or secret sauce to use this. If you intend to use a different cloud platform you may need to tweak the MariaDB storage class. If you intend to deploy Slurm on ARM, you'll need to build ARM images.
+Everything is public, including the Slurm images. You do not need any auth or secret sauce to use this. If you intend to use a different cloud platform you may need to tweak the MariaDB storage class.
 
-You can deploy slik into your kubernetes cluster simply with: `helm install -f helm/slik/values.yaml slik ./helm/slik/`
+Add the Helm repository and deploy SLiK into your Kubernetes cluster:
+
+```sh
+helm repo add slik https://vultr.github.io/slik
+helm repo update
+helm install slik slik/slik
+```
+
+From a local checkout, you can also install the chart with: `helm install -f helm/slik/values.yaml slik ./helm/slik/`
 
 You can then deploy a slurm cluster with one of the samples: `kubectl apply -f payloads/simple.yaml`
 
@@ -46,6 +54,18 @@ If you need to troubleshoot, check the logs for the operator: `kubectl logs slik
 
 ## Contribution(s)
 Please send any PRs for contributions/suggestions.
+
+## Helm Chart Releases
+
+Helm chart releases are published to GitHub Pages at `https://vultr.github.io/slik` by the `Release Helm Chart` workflow.
+
+To release a chart, merge or push a commit to `master` with a message like:
+
+```text
+Release helm-0.0.1 #patch
+```
+
+The workflow packages `helm/slik`, creates a GitHub release named `helm-0.0.1`, and updates the `gh-pages` branch with the Helm repository index. Use `#major`, `#minor`, or `#patch` to document the intended release type.
 
 ## Architecture
 Below are some details on the architecture:
