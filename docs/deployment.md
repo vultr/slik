@@ -13,7 +13,20 @@ This guide covers deploying the SLiK operator and creating a Slurm cluster from 
 
 ## Install The Operator
 
-From the repository root:
+Add the published Helm repository:
+
+```sh
+helm repo add slik https://vultr.github.io/slik
+helm repo update
+```
+
+Install the operator:
+
+```sh
+helm install slik slik/slik
+```
+
+If you are installing from a local checkout instead, run this from the repository root:
 
 ```sh
 helm install -f helm/slik/values.yaml slik ./helm/slik/

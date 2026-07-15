@@ -1,0 +1,4 @@
+charts-dir: helm
+pages-branch: gh-pages
+release-name-template: "helm-{{ .Version }}"
+make-release-latest: false
